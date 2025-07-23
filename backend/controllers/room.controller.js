@@ -1,7 +1,7 @@
 import { Room } from "../models/room.model.js";
 import { Hotel } from "../models/hotel.model.js";
 import cloudinary from "../utils/cloudinary.js";
-import getDataUri from "../utils/dataUri.js"; // ensure this is imported
+import getDataUri from "../utils/datauri.js"; // ensure this is imported
 import { Bookings } from "../models/bookings.model.js";
 
 // Create a new room
