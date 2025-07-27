@@ -7,6 +7,7 @@ import userRoute from "./routes/user.route.js";
 import hotelRoute from "./routes/hotel.route.js";
 import roomRoute from "./routes/room.route.js";
 import bookingRoute from "./routes/bookings.route.js";
+import { stripeWebhook } from "./controllers/webhook.controller.js";
 
 dotenv.config({});
 
@@ -33,7 +34,7 @@ app.use("/api/v1/user",userRoute);
 app.use("/api/v1/hotels",hotelRoute);
 app.use("/api/v1/room",roomRoute);
 app.use("/api/v1/booking",bookingRoute);
-
+app.post("/api/v1/webhook", express.raw({ type: 'application/json' }), stripeWebhook);
 
 app.listen(PORT,()=>{
     connectDB();
