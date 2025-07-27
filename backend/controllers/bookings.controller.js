@@ -117,45 +117,76 @@ import sendEmail from "../utils/nodemailer.js";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY); 
 
-export const createCheckoutSession = async (req, res) => {
-  try {
-    const { room, user, checkInDate, checkOutDate, guests, totalPrice } = req.body;
+// export const createCheckoutSession = async (req, res) => {
+//   try {
+//     const { room, user, checkInDate, checkOutDate, guests, totalPrice } = req.body;
 
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ["card"],
-      mode: "payment",
-      line_items: [
-        {
-          price_data: {
-            currency: "inr",
-            product_data: {
-              name: `Room: ${room.name}`,
-              description: `Check-In: ${checkInDate}, Check-Out: ${checkOutDate}`,
-            },
-            unit_amount: totalPrice * 100, // convert to paisa
-          },
-          quantity: 1,
+//     const session = await stripe.checkout.sessions.create({
+//       payment_method_types: ["card"],
+//       mode: "payment",
+//       line_items: [
+//         {
+//           price_data: {
+//             currency: "inr",
+//             product_data: {
+//               name: `Room: ${room.name}`,
+//               description: `Check-In: ${checkInDate}, Check-Out: ${checkOutDate}`,
+//             },
+//             unit_amount: totalPrice * 100, // convert to paisa
+//           },
+//           quantity: 1,
+//         },
+//       ],
+//       success_url: `http://localhost:5173/payment-success?session_id={CHECKOUT_SESSION_ID}`,
+//       cancel_url: `http://localhost:5173/payment-cancelled`,
+//       metadata: {
+//         roomId: room._id,
+//         userId: user._id,
+//         checkInDate,
+//         checkOutDate,
+//         guests,
+//         totalPrice,
+//       },
+//     });
+
+//     return res.status(200).json({ url: session.url });
+//   } catch (error) {
+//     console.error("Stripe session error:", error.message);
+//     return res.status(500).json({ error: "Something went wrong while creating checkout session" });
+//   }
+// };
+export const createCheckoutSession=async(req,res)=>{
+  try{
+    const {bookingId}=req.body;
+    const booking=await Bookings.findById(bookingId);
+    const roomData=await Room.findById(booking.room).populate('hotel')
+    const totalPrice=booking.totalPrice;
+    const {origin}=req.headers;
+    const stripeInstance=new Stripe(process.env.STRIPE_SECRET_KEY)
+    const line_items=[{
+      price_data:{
+        currency:'usd',
+        product_data:{
+          name:roomData.hotel.name
         },
-      ],
-      success_url: `http://localhost:5173/payment-success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `http://localhost:5173/payment-cancelled`,
-      metadata: {
-        roomId: room._id,
-        userId: user._id,
-        checkInDate,
-        checkOutDate,
-        guests,
-        totalPrice,
+        unit_amount:totalPrice*100
       },
-    });
-
-    return res.status(200).json({ url: session.url });
-  } catch (error) {
-    console.error("Stripe session error:", error.message);
-    return res.status(500).json({ error: "Something went wrong while creating checkout session" });
+      quantity:1,
+    }]
+    const session=await stripeInstance.checkout.sessions.create({
+      line_items,
+      mode:"payment",
+      success_url:`${origin}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url:`${origin}/bookings`,
+      metadata:{
+        bookingId
+      }
+    })
+    res.json({success:true,url:session.url})
+  }catch(error){
+    res.json({success:true,message:"Payment failed."})
   }
-};
-
+}
 
 
 
