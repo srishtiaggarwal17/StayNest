@@ -23,6 +23,11 @@ const corsOptions={
 app.use(cors(corsOptions));
 
 const PORT=process.env.PORT||4000;
+
+app.get("/", (req, res) => {
+  res.send("API is running successfully ✅");
+});
+
 //apis
 app.use("/api/v1/user",userRoute);
 app.use("/api/v1/hotels",hotelRoute);
