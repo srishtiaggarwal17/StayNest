@@ -17,6 +17,7 @@ import About from "./pages/About";
 import Experience from "./pages/Experience";
 import Footer from "./shared/Footer";
 import Profile from "./pages/Profile";
+import PaymentSuccess from "./pages/PaymentSuccess";
 
 const App=()=>{
   const isOwnerPath=useLocation().pathname.includes("owner")
@@ -35,6 +36,7 @@ const App=()=>{
           <Route path='/description/:id' element={<HotelDescription/>} />
           <Route path='/bookings' element={<MyBookings/>} />
           <Route path='/profile' element={<Profile/>} />
+          <Route path="/payment-success" element={<PaymentSuccess />} />
           <Route path='/owner' element={<Layout/>} >
               <Route index element={<OwnerDashboard/>}/>
               <Route path='/owner/add-room' element={<AddRoom/>}/>
