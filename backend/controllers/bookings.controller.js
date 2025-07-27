@@ -165,7 +165,7 @@ export const createCheckoutSession=async(req,res)=>{
     const stripeInstance=new Stripe(process.env.STRIPE_SECRET_KEY)
     const line_items=[{
       price_data:{
-        currency:'usd',
+        currency:'inr',
         product_data:{
           name:roomData.hotel.name
         },
