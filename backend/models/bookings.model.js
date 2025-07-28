@@ -17,6 +17,9 @@ const bookingSchema=new mongoose.Schema({
         required:true,
         default:"Pay at Hotel"
     },
+    stripeSessionId: {
+      type: String,
+    },
     isPaid:{type:Boolean,default:false}
 },{timestamps:true})
 
