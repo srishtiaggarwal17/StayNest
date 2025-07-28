@@ -27,8 +27,8 @@ const HotelDescription = () => {
   const [guests, setGuests] = useState(1);
   const [available, setAvailable] = useState(false);
 
-  const stripePromise = loadStripe(import.meta.env.STRIPE_PUBLISHABLE_KEY);
-  console.log("Stripe Key:", import.meta.env.STRIPE_PUBLISHABLE_KEY);
+  const stripePromise = loadStripe(STRIPE_PUBLISHABLE_KEY);
+  console.log("Stripe Key:", import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
   useEffect(() => {
     const fetchRoom = async () => {
