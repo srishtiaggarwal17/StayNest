@@ -176,7 +176,7 @@ export const createCheckoutSession=async(req,res)=>{
     const session=await stripeInstance.checkout.sessions.create({
       line_items,
       mode:"payment",
-      success_url:`${origin}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
+      success_url:`${origin}/payment-success`,
       cancel_url:`${origin}/bookings`,
       metadata:{
         bookingId
