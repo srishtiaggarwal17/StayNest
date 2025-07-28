@@ -5,7 +5,7 @@ import {BOOKING_API_END_POINT, STRIPE_PUBLISHABLE_KEY } from "@/utils/constant";
 import { toast } from "sonner";
 
 const stripePromise = loadStripe(STRIPE_PUBLISHABLE_KEY);
-
+console.log("stripe",STRIPE_PUBLISHABLE_KEY)
 const Payment = ({ room, user, checkInDate, checkOutDate, guests, totalPrice }) => {
   const handlePayment = async () => {
     try {
