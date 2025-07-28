@@ -13,6 +13,7 @@ dotenv.config({});
 
 const app=express();
 
+app.post("/api/v1/webhook", express.raw({ type: 'application/json' }), stripeWebhook);
 //middleware
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
@@ -34,7 +35,6 @@ app.use("/api/v1/user",userRoute);
 app.use("/api/v1/hotels",hotelRoute);
 app.use("/api/v1/room",roomRoute);
 app.use("/api/v1/booking",bookingRoute);
-app.post("/api/v1/webhook", express.raw({ type: 'application/json' }), stripeWebhook);
 
 app.listen(PORT,()=>{
     connectDB();
