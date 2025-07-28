@@ -183,7 +183,7 @@ export const createCheckoutSession=async(req,res)=>{
       }
     })
     booking.stripeSessionId = session.id;
-    booking.paymentStatus = "pending";
+    booking.status = "pending";
     await booking.save();
     res.json({success:true,url:session.url})
   }catch(error){
