@@ -113,8 +113,8 @@ const HotelDescription = () => {
       },{ withCredentials: true });
 
       window.location.href = paymentRes.data.url; // Stripe Checkout
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      console.error(error);
       toast.error("An error occurred during booking or payment.");
     }
   };
