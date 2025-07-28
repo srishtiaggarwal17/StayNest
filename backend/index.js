@@ -8,12 +8,13 @@ import hotelRoute from "./routes/hotel.route.js";
 import roomRoute from "./routes/room.route.js";
 import bookingRoute from "./routes/bookings.route.js";
 import { stripeWebhook } from "./controllers/webhook.controller.js";
+import bodyParser from 'body-parser';
 
 dotenv.config({});
 
 const app=express();
 
-app.post("/api/v1/webhook", express.raw({ type: 'application/json' }), stripeWebhook);
+app.post("/api/v1/webhook", bodyParser.raw({ type: 'application/json' }), stripeWebhook);
 //middleware
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
