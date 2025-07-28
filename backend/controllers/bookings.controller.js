@@ -72,8 +72,9 @@ export const createBooking = async (req, res) => {
                   <li><strong>Guests:</strong> ${guests}</li>
                   <li><strong>Total Price:</strong> ₹${totalPrice}</li>
                 </ul>
+                <p>Proceed to payment!!</p>
                 <p>We look forward to hosting you!</p>
-                <p>Thanks for booking with us! <br/> — MovieTix Team</p>
+                <p>Thanks for booking with us! <br/> — StayNest Team</p>
               </div>`
     })
     res.status(201).json({ success: true, booking, message: "Booking created successfully." });
@@ -176,7 +177,7 @@ export const createCheckoutSession=async(req,res)=>{
     const session=await stripeInstance.checkout.sessions.create({
       line_items,
       mode:"payment",
-      success_url:`${origin}/payment-success`,
+      success_url:`${origin}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url:`${origin}/bookings`,
       metadata:{
         bookingId
