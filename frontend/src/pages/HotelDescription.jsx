@@ -114,8 +114,8 @@ const HotelDescription = () => {
 
       window.location.href = paymentRes.data.url; // Stripe Checkout
     } catch (error) {
-      console.error(error);
       toast.error("An error occurred during booking or payment.");
+      console.error("Stripe Payment Error:",error);
     }
   };
 
