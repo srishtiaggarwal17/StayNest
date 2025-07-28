@@ -182,6 +182,9 @@ export const createCheckoutSession=async(req,res)=>{
         bookingId
       }
     })
+    booking.stripeSessionId = session.id;
+    booking.paymentStatus = "pending";
+    await booking.save();
     res.json({success:true,url:session.url})
   }catch(error){
     res.json({success:true,message:"Payment failed."})
