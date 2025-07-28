@@ -109,13 +109,19 @@ const HotelDescription = () => {
       const stripe = await stripePromise;
 
       const paymentRes = await axios.post(`${BOOKING_API_END_POINT}/payment`, {
+        // room,
+        // user,
+        // checkInDate:checkIn,
+        // checkOutDate:checkOut,
+        // guests,
+        // totalPrice,
         bookingId 
       },{ withCredentials: true });
 
       window.location.href = paymentRes.data.url; // Stripe Checkout
-    } catch (error) {
+    } catch (err) {
+      console.error(err);
       toast.error("An error occurred during booking or payment.");
-      console.error("Stripe Payment Error:",error);
     }
   };
 
