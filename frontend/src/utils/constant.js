@@ -6,4 +6,4 @@ export const USER_API_END_POINT = "https://staynest-server-ftfp.onrender.com/api
 export const HOTEL_API_END_POINT = "https://staynest-server-ftfp.onrender.com/api/v1/hotels";
 export const ROOM_API_END_POINT = "https://staynest-server-ftfp.onrender.com/api/v1/room";
 export const BOOKING_API_END_POINT = "https://staynest-server-ftfp.onrender.com/api/v1/booking";
-export const STRIPE_PUBLISHABLE_KEY = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
+export const STRIPE_PUBLISHABLE_KEY = import.meta.env.STRIPE_PUBLISHABLE_KEY;
