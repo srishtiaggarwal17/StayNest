@@ -25,6 +25,7 @@ const HotelDescription = () => {
   const [checkIn, setCheckIn] = useState("");
   const [checkOut, setCheckOut] = useState("");
   const [guests, setGuests] = useState(1);
+  const [rooms,setRooms]=useState(1);
   const [available, setAvailable] = useState(false);
 
   const stripePromise = loadStripe(STRIPE_PUBLISHABLE_KEY);
@@ -42,37 +43,40 @@ const HotelDescription = () => {
     };
     fetchRoom();
   }, [id]);
-
+ 
   const handleCheckAvailability = async () => {
-    if (!checkIn || !checkOut || !guests) {
-      toast.error("Please fill in all fields");
-      return;
+  if (!checkIn || !checkOut || !guests || !rooms) {
+    toast.error("Please fill in all fields");
+    return;
+  }
+  if (new Date(checkIn) >= new Date(checkOut)) {
+    toast.error("Check-out must be after check-in");
+    return;
+  }
+  try {
+    const res = await axios.post(`${BOOKING_API_END_POINT}/check-availability`, {
+      room: room._id,
+      checkInDate: checkIn,
+      checkOutDate: checkOut,
+      rooms, // ensure number
+    });
+    if (res.data.success && res.data.isAvailable) {
+      toast.success("Rooms are available 🎉");
+      setAvailable(true);
+    } else if (res.data.success && res.data.availableRooms > 0) {
+      toast.error(`Only ${res.data.availableRooms} room(s) available`);
+      setAvailable(false);
+    } else {
+      toast.error("Room is not available for selected dates");
+      setAvailable(false);
     }
+  } catch (error) {
+    toast.error("Failed to check availability");
+    console.error(error);
+  }
+};
 
-    if (new Date(checkIn) >= new Date(checkOut)) {
-      toast.error("Check-out must be after check-in");
-      return;
-    }
 
-    try {
-      const res = await axios.post(`${BOOKING_API_END_POINT}/check-availability`, {
-        room: room._id,
-        checkInDate: checkIn,
-        checkOutDate: checkOut,
-      });
-
-      if (res.data.success && res.data.isAvailable) {
-        toast.success("Room is available 🎉");
-        setAvailable(true);
-      } else {
-        toast.error("Room is not available for selected dates");
-        setAvailable(false);
-      }
-    } catch (error) {
-      toast.error("Failed to check availability");
-      console.error(error);
-    }
-  };
 
   const handleBookNow = async () => {
     if (!user) {
@@ -90,6 +94,7 @@ const HotelDescription = () => {
           checkInDate: checkIn,
           checkOutDate: checkOut,
           guests: guests,
+          rooms
         },
         { withCredentials: true }
       );
@@ -103,18 +108,12 @@ const HotelDescription = () => {
 
       // 2. Calculate total price
       const nights = Math.ceil((new Date(checkOut) - new Date(checkIn)) / (1000 * 60 * 60 * 24));
-      const totalPrice = room.price * nights;
+      const totalPrice = room.price * nights * rooms;
 
       // 3. Initiate Stripe payment
       const stripe = await stripePromise;
 
       const paymentRes = await axios.post(`${BOOKING_API_END_POINT}/payment`, {
-        // room,
-        // user,
-        // checkInDate:checkIn,
-        // checkOutDate:checkOut,
-        // guests,
-        // totalPrice,
         bookingId 
       },{ withCredentials: true });
 
@@ -195,6 +194,10 @@ const HotelDescription = () => {
           <label className="font-medium">Guests</label>
           <Input type="number" className="w-full" min={1} value={guests} onChange={(e) => setGuests(e.target.value)} />
         </div>
+        <div>
+          <label className="font-medium">Rooms</label>
+          <Input type="number" className="w-full" min={1} value={rooms} onChange={(e) => setRooms(Number(e.target.value))} />
+        </div>
         <div className="mt-6">
           <Button
             className="bg-blue-600 hover:bg-blue-700 text-white"
@@ -222,4 +225,3 @@ const HotelDescription = () => {
 };
 
 export default HotelDescription;
-
