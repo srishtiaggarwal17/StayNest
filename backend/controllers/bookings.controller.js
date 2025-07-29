@@ -3,42 +3,89 @@ import { Room } from "../models/room.model.js";
 import { Hotel } from "../models/hotel.model.js"; 
 import { User } from "../models/user.model.js";
 
-export const checkAvailability = async ({checkInDate,checkOutDate,room}) => {
+export const checkAvailability = async ({ room, checkInDate, checkOutDate, rooms }) => {
   try {
-    const bookings=await Bookings.find({
-        room,
-        $or: [
+    const roomData = await Room.findById(room);
+    if (!roomData) return { isAvailable: false, availableRooms: 0 };
+
+    const checkIn = new Date(checkInDate);
+    const checkOut = new Date(checkOutDate);
+
+    // Find overlapping bookings for the same room
+    const overlappingBookings = await Bookings.find({
+      room,
+      $or: [
         {
-          checkInDate: { $lte: checkOutDate },
-          checkOutDate: { $gte: checkInDate }
-        }
-      ]
-    })
-    const isAvailable=bookings.length===0
-    return isAvailable;
+          checkInDate: { $lt: checkOut },
+          checkOutDate: { $gt: checkIn },
+        },
+      ],
+    });
+
+    // Total booked rooms for selected dates
+    const totalRoomsBooked = overlappingBookings.reduce(
+      (sum, b) => sum + b.rooms,
+      0
+    );
+
+    const totalRooms = roomData.roomCount;
+    const availableRooms = totalRooms - totalRoomsBooked;
+
+    return {
+      isAvailable: availableRooms >= Number(rooms),
+      availableRooms: availableRooms < 0 ? 0 : availableRooms,
+    };
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    console.error("Error in checkAvailability:", error.message);
+    return { isAvailable: false, availableRooms: 0 };
   }
 };
-
-
-export const checkAvailabilityApi = async (req,res) => {
+export const checkAvailabilityApi = async (req, res) => {
   try {
-    const {room,checkInDate,checkOutDate}=req.body;
-    const isAvailable=await checkAvailability({checkInDate,checkOutDate,room})
-    res.json({success:true,isAvailable})
+    const { room, checkInDate, checkOutDate, rooms } = req.body;
+
+    if (!room || !checkInDate || !checkOutDate || !rooms) {
+      return res.status(400).json({ success: false, message: "Missing required fields" });
+    }
+
+    const { isAvailable, availableRooms } = await checkAvailability({
+      checkInDate,
+      checkOutDate,
+      room,
+      rooms,
+    });
+
+    if (isAvailable) {
+      return res.status(200).json({
+        success: true,
+        isAvailable: true,
+        message: "Room is available",
+        availableRooms,
+      });
+    } else {
+      return res.status(200).json({
+        success: true,
+        isAvailable: false,
+        message:
+          availableRooms === 0
+            ? "Room is fully booked for selected dates"
+            : `Only ${availableRooms} room(s) available for selected dates`,
+        availableRooms,
+      });
+    }
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    console.error("Availability Check Error: ", error);
+    res.status(500).json({ success: false, message: "Server Error" });
   }
 };
 
 export const createBooking = async (req, res) => {
   try {
-    const { room, checkInDate, checkOutDate, guests } = req.body;
+    const { room, checkInDate, checkOutDate, guests,rooms } = req.body;
     const userId = req.id;
     const userData = await User.findById(userId);
 
-    const isAvailable = await checkAvailability({ checkInDate, checkOutDate, room });
+    const isAvailable = await checkAvailability({ checkInDate, checkOutDate, room ,rooms});
     if (!isAvailable)
       return res.json({ success: false, message: "Room is not available." });
 
@@ -47,7 +94,7 @@ export const createBooking = async (req, res) => {
     const checkIn = new Date(checkInDate);
     const checkOut = new Date(checkOutDate);
     const nights = Math.ceil((checkOut - checkIn) / (1000 * 3600 * 24));
-    const totalPrice = roomData.price * nights;
+    const totalPrice = roomData.price * nights * rooms;
 
     const booking = await Bookings.create({
       user: userId,
@@ -57,6 +104,7 @@ export const createBooking = async (req, res) => {
       checkInDate,
       checkOutDate,
       totalPrice,
+      rooms
     });
   
     await sendEmail({
