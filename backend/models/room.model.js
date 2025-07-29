@@ -29,7 +29,16 @@ const roomSchema = new mongoose.Schema({
   },
   images: [{
     type: String,
-  }]
+  }],
+  roomCount: {                
+    type: Number,
+    required: true,
+    min: 1,
+  },
+  bookedCount: {
+    type: Number,
+    default: 0,
+  }
 }, { timestamps: true });
 
 export const Room = mongoose.model("Room", roomSchema);
