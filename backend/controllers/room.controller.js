@@ -3,6 +3,7 @@ import { Hotel } from "../models/hotel.model.js";
 import cloudinary from "../utils/cloudinary.js";
 import getDataUri from "../utils/datauri.js"; // ensure this is imported
 import { Bookings } from "../models/bookings.model.js";
+import { checkAvailability } from "./bookings.controller.js";
 
 // Create a new room
 export const createRoom = async (req, res) => {
