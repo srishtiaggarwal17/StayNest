@@ -112,14 +112,6 @@ const Hotels = () => {
     };
 
     fetchRooms();
-    console.log("Fetching rooms with filters:", {
-  searchTerm,
-  checkIn,
-  checkOut,
-  guests,
-  roomNos
-});
-
   }, [searchTerm, checkIn, checkOut, guests, roomNos]);
 
   useEffect(() => {
