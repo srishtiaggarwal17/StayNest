@@ -9,6 +9,7 @@ import axios from "axios";
 import { USER_API_END_POINT } from "@/utils/constant";
 import { setUser } from "@/redux/authSlice";
 import { toast } from "sonner";
+import logo2 from "@/assets/logo2.png"
 
 const Navbar = () => {
   const { user } = useSelector((store) => store.auth);
@@ -35,9 +36,12 @@ const Navbar = () => {
     <div className="bg-white shadow-md w-full h-16 flex items-center justify-between px-6 z-50">
       {/* Left: Logo */}
       <Link to="/">
-        <h1 className="text-xl font-bold text-black">
+{/*         <h1 className="text-xl font-bold text-black">
           Stay<span className="text-blue-600">Nest</span>
-        </h1>
+        </h1> */}
+        <div>
+          <img className="h-28 w-auto"  src={logo2}/>
+        </div>
       </Link>
 
       {/* Right: Auth/Avatar */}
