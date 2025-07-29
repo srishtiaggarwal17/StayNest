@@ -98,6 +98,7 @@ const HeroSection = () => {
   const [checkIn, setCheckIn] = useState("");
   const [checkOut, setCheckOut] = useState("");
   const [guests, setGuests] = useState(1);
+  const [rooms, setRooms] = useState(1);
 
   const handleSearch = () => {
     const params = new URLSearchParams({
@@ -105,6 +106,7 @@ const HeroSection = () => {
       checkIn,
       checkOut,
       guests,
+      rooms
     }).toString();
 
     navigate(`/hotels?${params}`);
@@ -129,7 +131,7 @@ const HeroSection = () => {
           Start your journey today.
         </p>
 
-        <div className="bg-white text-black p-4 md:p-6 rounded-xl shadow-xl grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4 w-full max-w-5xl items-end">
+        <div className="bg-white text-black p-4 md:p-6 rounded-xl shadow-xl grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 gap-4 w-full max-w-5xl items-end">
           <div className="flex flex-col gap-1">
             <label className="flex items-center text-sm font-medium text-gray-700">
               <CalendarIcon className="w-4 h-4 mr-2" /> Destination
@@ -172,6 +174,17 @@ const HeroSection = () => {
               className="text-sm"
               value={guests}
               onChange={(e) => setGuests(e.target.value)}
+            />
+          </div>
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-medium text-gray-700">Rooms</label>
+            <Input
+              type="number"
+              min={1}
+              placeholder="0"
+              className="text-sm"
+              value={rooms}
+              onChange={(e) => setRooms(e.target.value)}
             />
           </div>
           <div className="flex">
