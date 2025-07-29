@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import HotelCard from "@/components/HotelCard";
@@ -14,6 +15,7 @@ const Hotels = () => {
   const checkIn = query.get("checkIn");
   const checkOut = query.get("checkOut");
   const guests = query.get("guests") ? parseInt(query.get("guests")) : null;
+  const roomNos = query.get("rooms") ? parseInt(query.get("rooms")) : null;
 
   const [rooms, setRooms] = useState([]);
   const [filteredRooms, setFilteredRooms] = useState([]);
@@ -26,7 +28,15 @@ const Hotels = () => {
   useEffect(() => {
     const fetchRooms = async () => {
       try {
-        const res = await axios.get(`${ROOM_API_END_POINT}/getRooms`);
+        const res = await axios.get(`${ROOM_API_END_POINT}/getRooms`, {
+          params: {
+            searchTerm,
+            checkInDate: checkIn,
+            checkOutDate: checkOut,
+            guests,
+            roomNos,
+          },
+        });
         let allRooms = res.data.rooms;
 
         // Step 1: Search filter
@@ -46,10 +56,9 @@ const Hotels = () => {
           });
         }
 
-        const availableRooms = [];
-
+        // Step 2: Check availability if dates are provided
         if (checkIn && checkOut) {
-          const checkAvailabilityPromises = allRooms.map(async (room) => {
+          const availabilityChecks = allRooms.map(async (room) => {
             try {
               const { data } = await axios.post(
                 `${BOOKING_API_END_POINT}/check-availability`,
@@ -57,46 +66,61 @@ const Hotels = () => {
                   room: room._id,
                   checkInDate: checkIn,
                   checkOutDate: checkOut,
+                  rooms: roomNos || 1,
                 }
               );
-              if (data.isAvailable) {
-                return room;
-              }
-              return null;
+
+              return {
+                ...room,
+                availableRooms: data.availableRooms,
+                isAvailable: data.isAvailable,
+              };
             } catch (err) {
               console.error("Availability check failed:", err);
-              return null;
+              return { ...room, availableRooms: 0, isAvailable: false };
             }
           });
 
-          const results = await Promise.all(checkAvailabilityPromises);
-          const filteredAvailableRooms = results.filter((room) => {
-            if (!room) return false;
-            if (guests !== null) {
-              return room.maxGuests >= guests;
-            }
+          const resultRooms = await Promise.all(availabilityChecks);
+
+          // Optional filter by guests or room count
+          const filteredByGuests = resultRooms.filter((room) => {
+            if (guests && room.maxGuests < guests) return false;
             return true;
           });
 
-          availableRooms.push(...filteredAvailableRooms);
+          setRooms(filteredByGuests);
+          setFilteredRooms(filteredByGuests);
         } else {
-          // If no check-in/check-out provided, still filter by guests
-          const filteredByGuests = guests
+          // No dates: show rooms filtered only by guest count
+          const filtered = guests
             ? allRooms.filter((room) => room.maxGuests >= guests)
             : allRooms;
 
-          availableRooms.push(...filteredByGuests);
-        }
+          const enrichedRooms = filtered.map((room) => ({
+            ...room,
+            isAvailable: true,
+            availableRooms: room.roomCount,
+          }));
 
-        setRooms(availableRooms);
-        setFilteredRooms(availableRooms);
+          setRooms(enrichedRooms);
+          setFilteredRooms(enrichedRooms);
+        }
       } catch (err) {
         console.error(err);
       }
     };
 
     fetchRooms();
-  }, [searchTerm, checkIn, checkOut, guests]);
+    console.log("Fetching rooms with filters:", {
+  searchTerm,
+  checkIn,
+  checkOut,
+  guests,
+  roomNos
+});
+
+  }, [searchTerm, checkIn, checkOut, guests, roomNos]);
 
   useEffect(() => {
     let filtered = [...rooms];
@@ -136,7 +160,8 @@ const Hotels = () => {
         <p className="text-gray-600 text-sm mb-4">
           {checkIn && `Check-in: ${checkIn}`}{" "}
           {checkOut && `| Check-out: ${checkOut}`}{" "}
-          {guests && `| Guests: ${guests}`}
+          {guests && `| Guests: ${guests}`}{" "}
+          {roomNos && `| Rooms: ${roomNos}`}
         </p>
 
         <Input
@@ -150,7 +175,14 @@ const Hotels = () => {
         {filteredRooms.length === 0 ? (
           <span>No rooms found.</span>
         ) : (
-          filteredRooms.map((room) => <HotelCard key={room._id} room={room} />)
+          filteredRooms.map((room) => (
+            <HotelCard
+              key={room._id}
+              room={room}
+              isAvailable={room.isAvailable}
+              availableRooms={room.availableRooms}
+            />
+          ))
         )}
       </div>
 
@@ -169,3 +201,4 @@ const Hotels = () => {
 };
 
 export default Hotels;
+
