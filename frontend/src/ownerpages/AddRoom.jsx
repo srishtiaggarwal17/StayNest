@@ -139,6 +139,8 @@ const AddRoom = () => {
   const [images, setImages] = useState([]);
   const [hotelId, setHotelId] = useState(null);
   const [maxGuests, setMaxGuests] = useState(1);
+  const [roomCount, setRoomCount] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
 
   const { user } = useSelector((state) => state.auth);
 
@@ -199,6 +201,7 @@ const AddRoom = () => {
     formData.append("type", roomType);
     formData.append("price", price);
     formData.append("maxGuests", maxGuests);
+    formData.append("roomCount", roomCount);
     formData.append("amenities", JSON.stringify(amenities));
 
     images.forEach((image) => {
@@ -217,6 +220,7 @@ const AddRoom = () => {
       setRoomType("");
       setPrice(0);
       setMaxGuests(1);
+      setRoomCount(1);
       setAmenities([]);
       setImages([]);
     } catch (err) {
@@ -299,6 +303,17 @@ const AddRoom = () => {
                 min="1"
                 value={maxGuests}
                 onChange={(e) => setMaxGuests(e.target.value)}
+                className="w-24 border rounded px-3 py-2"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-1">Total Rooms</label>
+              <input
+                type="number"
+                min="1"
+                value={roomCount}
+                onChange={(e) => setRoomCount(e.target.value)}
                 className="w-24 border rounded px-3 py-2"
               />
             </div>
