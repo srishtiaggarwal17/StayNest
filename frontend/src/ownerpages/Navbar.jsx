@@ -36,7 +36,7 @@ const Navbar = () => {
       {/* Left: Logo */}
       <Link to="/">
         <h1 className="text-xl font-bold text-black">
-          Quick<span className="text-blue-600">Stay</span>
+          Stay<span className="text-blue-600">Nest</span>
         </h1>
       </Link>
 
