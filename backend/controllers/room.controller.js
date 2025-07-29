@@ -7,7 +7,7 @@ import { Bookings } from "../models/bookings.model.js";
 // Create a new room
 export const createRoom = async (req, res) => {
   try {
-    const { hotel, type, price, amenities,maxGuests } = req.body;
+    const { hotel, type, price, amenities,maxGuests,roomCount} = req.body;
 
     // Ensure hotel exists
     const hotelExists = await Hotel.findById(hotel);
@@ -31,6 +31,7 @@ export const createRoom = async (req, res) => {
       type,
       price: +price,
       maxGuests,
+      roomCount: +roomCount,
       amenities: JSON.parse(amenities),
       images: uploadImages,
     });
@@ -48,17 +49,65 @@ export const createRoom = async (req, res) => {
 
 
 // Get all rooms
+// export const getAllRooms = async (req, res) => {
+//   try {
+//     const rooms = await Room.find({isAvailable:true}).populate({
+//         path:'hotel',
+//         populate:{
+//             path:'owner',
+//             select:'image'
+//         }
+//     }).sort({createdAt:-1})
+//     res.json({success:true,rooms})
+//   } catch (error) {
+//     res.status(500).json({ success: false, message: error.message });
+//   }
+// };
 export const getAllRooms = async (req, res) => {
   try {
-    const rooms = await Room.find({isAvailable:true}).populate({
-        path:'hotel',
-        populate:{
-            path:'owner',
-            select:'image'
-        }
-    }).sort({createdAt:-1})
-    res.json({success:true,rooms})
+    const { searchTerm, checkInDate, checkOutDate, roomNos, guests } = req.query;
+    let filter = {};
+    if (searchTerm) {
+      filter = {
+        ...filter,
+        isAvailable: true,
+      };
+    }
+    let rooms = await Room.find(filter)
+      .populate({
+        path: "hotel",
+        populate: {
+          path: "owner",
+          select: "image",
+        },
+      })
+      .sort({ createdAt: -1 });
+    if (guests) {
+      const guestCount = parseInt(guests);
+      rooms = rooms.filter((room) => room.maxGuests >= guestCount);
+    }
+    if (checkInDate && checkOutDate && roomNos) {
+      const roomCount = parseInt(roomNos);
+      const roomAvailabilityPromises = rooms.map(async (room) => {
+        const availability = await checkAvailability({
+          room: room._id,
+          checkInDate,
+          checkOutDate,
+          rooms: roomCount,
+        });
+
+        return {
+          ...room.toObject(),
+          availableRooms: availability.availableRooms,
+          isAvailable: availability.isAvailable,
+        };
+      });
+      const checkedRooms = await Promise.all(roomAvailabilityPromises);
+      rooms = checkedRooms.filter((room) => room.isAvailable);
+    }
+    res.json({ success: true, rooms });
   } catch (error) {
+    console.error("Error in getAllRooms:", error);
     res.status(500).json({ success: false, message: error.message });
   }
 };
