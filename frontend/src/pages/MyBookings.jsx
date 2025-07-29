@@ -76,7 +76,7 @@ const MyBookings = () => {
             <img
               src={booking.room.images?.[0] || "/default.jpg"}
               alt={booking.hotel.name}
-              className="w-[190px] h-[110px] object-cover rounded-lg"
+              className="w-[290px] h-[140px] object-cover rounded-lg"
             />
             <div>
               <h2 className="font-semibold">{booking.hotel.name}  ({booking.room.type || "Room"})</h2>
@@ -90,6 +90,10 @@ const MyBookings = () => {
               <p className="text-sm text-gray-500 flex items-center gap-1 mt-1">
                 <Users size={14} />
                 Guests: {booking.guests}
+              </p>
+              <p className="text-sm text-gray-500 flex items-center gap-1 mt-1">
+                <DoorOpen size={14} />
+                Rooms: {booking.rooms}
               </p>
               <p className="text-sm font-semibold mt-1">
                 Total: ₹{booking.totalPrice}
