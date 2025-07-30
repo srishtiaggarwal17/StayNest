@@ -46,7 +46,7 @@ const Navbar = () => {
         </div>
 
         {/* Nav Links */}
-        <ul className={`absolute left-1/2 -translate-x-1/2 flex items-center gap-6 px-6 py-2 rounded-full backdrop-blur-md transition ${
+{/*         <ul className={`absolute left-1/2 -translate-x-1/2 flex items-center gap-6 px-6 py-2 rounded-full backdrop-blur-md transition ${
           isHome? "bg-white/20 text-white border border-white/30"
           : " text-black "}`}>
           <li>
@@ -61,7 +61,34 @@ const Navbar = () => {
           <li>
             <Link to="/about" className="hover:text-gray-500">About</Link>
           </li>
-        </ul>
+        </ul> */}
+          <ul
+          className={`absolute left-1/2 -translate-x-1/2 flex items-center gap-1.3 px-6 py-2 rounded-full backdrop-blur-md transition ${
+          isHome
+          ? "bg-white/20 text-white border border-white/30"
+          : "bg-black/5 text-black border border-black/10"}`}
+        >
+          {[
+            { path: "/", label: "Home" },
+            { path: "/hotels", label: "Hotels" },
+            { path: "/experience", label: "Experience" },
+            { path: "/about", label: "About" },
+          ].map((item) => (
+          <li key={item.path}>
+            <Link to={item.path}
+              className={`px-2.5 py-1 rounded-full transition-all duration-300 ease-in-out 
+              ${
+              isHome
+              ? "hover:bg-white/30 hover:text-white"
+              : "hover:bg-black/10 hover:text-black"
+              }
+              hover:shadow-md hover:scale-105`}
+            >
+              {item.label}
+            </Link>
+          </li>
+        ))}
+      </ul>
 
         {/* Auth Buttons or Avatar */}
         {!user ? (
