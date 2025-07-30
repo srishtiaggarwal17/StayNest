@@ -46,7 +46,9 @@ const Navbar = () => {
         </div>
 
         {/* Nav Links */}
-        <ul className="absolute left-1/2 -translate-x-1/2 flex font-medium items-center gap-8">
+        <ul className={`absolute left-1/2 -translate-x-1/2 flex items-center gap-6 px-6 py-2 rounded-full backdrop-blur-md transition ${
+          isHome? "bg-white/20 text-white border border-white/30"
+          : " text-black "}`}>
           <li>
             <Link to="/" className="hover:text-gray-500">Home</Link>
           </li>
