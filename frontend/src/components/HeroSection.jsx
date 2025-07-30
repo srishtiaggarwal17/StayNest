@@ -115,7 +115,7 @@ const HeroSection = () => {
   return (
     <div
       className="relative h-screen w-full bg-cover bg-center text-white"
-      style={{ backgroundImage: `url(${bgImage})` }}
+      style={{ backgroundImage: `url(https://images.pexels.com/photos/2034335/pexels-photo-2034335.jpeg?cs=srgb&dl=architecture-building-chairs-2034335.jpg&fm=jpg)` }}
     >
       <div className="absolute inset-0 bg-black bg-opacity-50 z-10" />
       <div className="relative z-20 h-full flex flex-col justify-center items-start text-left px-6 md:px-20 max-w-5xl">
