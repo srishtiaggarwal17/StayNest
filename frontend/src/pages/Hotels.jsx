@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 const useQuery = () => new URLSearchParams(useLocation().search);
 
 const Hotels = () => {
+  const [isLoading, setIsLoading] = useState(false);
   const query = useQuery();
   const destinationQuery = query.get("destination") || "";
   const checkIn = query.get("checkIn");
@@ -27,6 +28,7 @@ const Hotels = () => {
 
   useEffect(() => {
     const fetchRooms = async () => {
+      setIsLoading(true); 
       try {
         const res = await axios.get(`${ROOM_API_END_POINT}/getRooms`, {
           params: {
@@ -109,6 +111,7 @@ const Hotels = () => {
       } catch (err) {
         console.error(err);
       }
+      setIsLoading(false);
     };
 
     fetchRooms();
@@ -164,11 +167,44 @@ const Hotels = () => {
           onChange={(e) => setSearchTerm(e.target.value)}
         />
 
-        {filteredRooms.length === 0 ? (
+{/*         {filteredRooms.length === 0 ? (
           <span>No rooms found.</span>
         ) : (
           filteredRooms.map((room) => (
             <HotelCard
+              key={room._id}
+              room={room}
+              isAvailable={room.isAvailable}
+              availableRooms={room.availableRooms}
+            />
+          ))
+        )} */}
+        {isLoading ? (
+          <div className="space-y-4">
+            {[...Array(4)].map((_, idx) => (
+              <div key={idx}
+                className="flex gap-4 p-4 rounded-xl bg-white shadow border border-gray-200 animate-pulse"
+              >
+                <div className="h-24 w-40 bg-gray-300 rounded-md"></div>
+                  <div className="flex flex-col justify-between flex-1 py-1">
+                    <div>
+                      <div className="h-4 bg-gray-300 rounded w-2/3 mb-2"></div>
+                      <div className="h-3 bg-gray-200 rounded w-1/2 mb-1"></div>
+                      <div className="h-3 bg-gray-200 rounded w-1/3"></div>
+                    </div>
+                    <div className="flex gap-4 mt-4">
+                      <div className="h-4 bg-gray-300 rounded w-20"></div>
+                      <div className="h-4 bg-gray-300 rounded w-12"></div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : filteredRooms.length === 0 ? (
+            <span>No rooms found.</span>
+          ) : (
+            filteredRooms.map((room) => (
+             <HotelCard
               key={room._id}
               room={room}
               isAvailable={room.isAvailable}
