@@ -10,10 +10,26 @@ import { useSelector } from "react-redux";
 import { loadStripe } from "@stripe/stripe-js";
 
 const features = [
-  { icon: "🏠", title: "Clean & Safe Stay", desc: "A well-maintained and hygienic space just for you." },
-  { icon: "🧼", title: "Enhanced Cleaning", desc: "Follows strict cleaning standards." },
-  { icon: "📍", title: "Excellent Location", desc: "90% of guests rated the location 5 stars." },
-  { icon: "✅", title: "Smooth Check-In", desc: "100% guests gave 5-star rating for check-in." },
+  {
+    icon: <Wifi className="w-5 h-5" />,
+    title: "Free Wi-Fi",
+    desc: "Stay connected with complimentary high-speed Wi-Fi.",
+  },
+  {
+    icon: <Headphones className="w-5 h-5" />,
+    title: "24x7 Customer Support",
+    desc: "We're always here to help you with your queries.",
+  },
+  {
+    icon: <Clock className="w-5 h-5" />,
+    title: "Flexible Check-in/out",
+    desc: "Plan your stay with peace of mind and convenience.",
+  },
+  {
+    icon: <BadgeCheck className="w-5 h-5" />,
+    title: "Verified Properties",
+    desc: "Every listing is quality checked and verified.",
+  },
 ];
 
 const HotelDescription = () => {
@@ -209,17 +225,53 @@ const HotelDescription = () => {
       </div>
 
       {/* Features */}
-      <div className="mt-8 space-y-4">
+      <div className="mt-10 max-w-6xl mx-auto flex flex-wrap gap-8">
+    {/* Features on the left (70%) */}
+      <div className="w-full md:w-[65%] space-y-5 divide-y divide-gray-200">
         {features.map((f, i) => (
-          <div key={i} className="flex gap-3 items-start">
-            <div className="text-xl">{f.icon}</div>
-            <div>
-              <p className="font-semibold">{f.title}</p>
-              <p className="text-sm text-gray-500">{f.desc}</p>
+          <div key={i} className="flex gap-4 pt-1 first:pt-0">
+            <div className="flex-shrink-0">
+              <div className="w-10 h-10 bg-blue-100 text-blue-600 flex items-center justify-center rounded-full">
+                {f.icon}
+              </div>
             </div>
-          </div>
-        ))}
+          <div>
+          <h3 className="font-semibold text-base">{f.title}</h3>
+          <p className="text-sm text-gray-600">{f.desc}</p>
+        </div>
       </div>
+     ))}
+    </div>
+    {/* Map on the right (30%) */}
+    <div className="w-full md:w-[30%]">
+      <h2 className="text-lg font-semibold mb-2">Explore the area</h2>
+      <div className="rounded-lg overflow-hidden border border-gray-300 shadow-sm">
+        <iframe
+          width="100%"
+          height="180"
+          loading="lazy"
+          allowFullScreen
+          src={`https://www.google.com/maps?q=${encodeURIComponent(
+            room.hotel.address
+          )}&output=embed`}
+          className="w-full"
+        ></iframe>
+        <div className="p-2 bg-white border-t text-xs">
+          <div>{room.hotel.address}</div>
+          <a
+            className="text-blue-600 underline mt-1 block"
+            href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+            room.hotel.address
+            )}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            View in a map
+          </a>
+        </div>
+      </div>
+    </div>
+ </div>
     </div>
   );
 };
