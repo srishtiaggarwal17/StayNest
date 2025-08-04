@@ -1,104 +1,44 @@
-import OfferCard from "@/components/OfferCard";
-import bgImage from "@/assets/bg.png";
-import { useNavigate } from "react-router-dom";
+import { CheckCircle, BedDouble, MapPin, ShieldCheck } from "lucide-react";
 
-import React, { useRef } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-
-
-const destinations = [
+const highlights = [
   {
-    city: "Adventure",
-    country: "Explore wild stays",
-    image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e",
-    isFullWidth: true,
+    icon: BedDouble,
+    title: "Curated Stays",
+    desc: "Top-rated rooms with verified amenities and comfort.",
   },
   {
-    city: "Mississauga",
-    country: "Canada",
-    image: "https://upload.wikimedia.org/wikipedia/commons/b/b2/Mississauga.jpg",
+    icon: MapPin,
+    title: "Perfect Locations",
+    desc: "Stay close to attractions, transit, and the heart of the city.",
   },
   {
-    city: "Bangkok",
-    country: "Thailand",
-    image: "https://upload.wikimedia.org/wikipedia/commons/5/5d/Bangkok_at_night.jpg",
+    icon: ShieldCheck,
+    title: "Customer Support",
+    desc: "Backed by secure payments and 24/7 customer support.",
   },
   {
-    city: "London",
-    country: "United Kingdom",
-    image: "https://upload.wikimedia.org/wikipedia/commons/a/a8/London_Big_Ben.jpg",
-  },
-  {
-    city: "Varanasi",
-    country: "India",
-    image: "https://upload.wikimedia.org/wikipedia/commons/3/3a/Varanasi_Ghat.jpg",
-  },
-  {
-    city: "Solang",
-    country: "India",
-    image: "https://upload.wikimedia.org/wikipedia/commons/9/91/Solang_valley.jpg",
+    icon: CheckCircle,
+    title: "No Hidden Fees",
+    desc: "Transparent pricing. What you see is what you pay.",
   },
 ];
 
-const ExclusiveOffers = () => {
-  const navigate = useNavigate();
-  const scrollRef = useRef(null);
-
-  const scroll = (direction) => {
-    if (scrollRef.current) {
-      const { scrollLeft, clientWidth } = scrollRef.current;
-      const scrollTo = direction === "left" ? scrollLeft - clientWidth : scrollLeft + clientWidth;
-      scrollRef.current.scrollTo({ left: scrollTo, behavior: "smooth" });
-    }
-  };
-
+export default function ExclusiveOffers() {
   return (
-    <div className="px-6 py-10 relative">
-      <h2 className="text-2xl font-bold mb-6">Explore stays in trending destinations</h2>
+    <section className="bg-white py-2 px-4">
+      <div className="max-w-6xl mx-auto text-center">
 
-      {/* Scroll Buttons */}
-      <button
-        className="absolute left-0 top-1/2 transform -translate-y-1/2 z-10 bg-white p-2 shadow rounded-full hover:bg-gray-100"
-        onClick={() => scroll("left")}
-      >
-        <ChevronLeft />
-      </button>
-      <button
-        className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 bg-white p-2 shadow rounded-full hover:bg-gray-100"
-        onClick={() => scroll("right")}
-      >
-        <ChevronRight />
-      </button>
-
-      {/* Scrollable Destinations */}
-      <div
-        ref={scrollRef}
-        className="flex gap-4 overflow-x-auto scrollbar-hide scroll-smooth"
-      >
-        {destinations.map((dest, index) => (
-          <div
-            key={index}
-            onClick={() => navigate(`/hotels?city=${encodeURIComponent(dest.city)}`)}
-            className={`flex-shrink-0 cursor-pointer rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 ${
-              dest.isFullWidth ? "w-[400px]" : "w-[250px]"
-            }`}
-          >
-            <img
-              src={dest.image}
-              alt={dest.city}
-              className="h-40 w-full object-cover"
-            />
-            <div className="p-3 bg-white">
-              <p className="font-semibold text-lg">{dest.city}</p>
-              <p className="text-sm text-gray-500">{dest.country}</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 text-left">
+          {highlights.map((item, idx) => (
+            <div key={idx} className="flex flex-col items-start border rounded-lg p-4 hover:shadow-sm transition">
+              <item.icon className="text-blue-600 w-6 h-6 mb-3" />
+              <h4 className="font-semibold text-lg mb-1 text-gray-800">{item.title}</h4>
+              <p className="text-sm text-gray-600">{item.desc}</p>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
+
       </div>
-    </div>
+    </section>
   );
-};
-
-export default ExclusiveOffers;
-
-
+}
