@@ -32,14 +32,14 @@ export default function TrendingDestinations() {
 
   return (
     <section className="py-10">
-      <div className="flex justify-center mb-6">
-        <h2 className="text-3xl font-bold text-center">
+      <div className="mb-6 max-w-6xl mx-auto px-2">
+        <h2 className="text-3xl font-bold">
           Trending destinations with travellers from India
         </h2>
       </div>
 
       {/* First row: 2 cities */}
-      <div className="grid grid-cols-2 gap-4 max-w-5xl mx-auto">
+      <div className="grid grid-cols-2 gap-4 max-w-6xl mx-auto">
         {trendingCities.slice(0, 2).map((city) => (
           <div
             key={city.name}
@@ -50,7 +50,7 @@ export default function TrendingDestinations() {
             <img
               src={city.image}
               alt={city.name}
-              className="w-full h-60 object-cover"
+              className="w-full h-64 object-cover"
             />
 
             {/* Overlay */}
@@ -65,7 +65,7 @@ export default function TrendingDestinations() {
       </div>
 
       {/* Second row: 3 cities */}
-      <div className="grid grid-cols-3 gap-4 mt-4 max-w-5xl mx-auto">
+      <div className="grid grid-cols-3 gap-4 mt-4 max-w-6xl mx-auto">
         {trendingCities.slice(2).map((city) => (
           <div
             key={city.name}
@@ -76,7 +76,7 @@ export default function TrendingDestinations() {
             <img
               src={city.image}
               alt={city.name}
-              className="w-full h-48 object-cover"
+              className="w-full h-52 object-cover"
             />
 
             {/* Overlay */}
@@ -92,3 +92,4 @@ export default function TrendingDestinations() {
     </section>
   );
 }
+
