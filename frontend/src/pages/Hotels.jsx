@@ -208,7 +208,28 @@ const Hotels = () => {
         )}
       </div>
 
-      <div className="w-1/4">
+{/*       <div className="w-1/4">
+        <HotelFilter
+          roomTypes={roomTypes}
+          setRoomTypes={setRoomTypes}
+          priceRanges={priceRanges}
+          setPriceRanges={setPriceRanges}
+          sortBy={sortBy}
+          setSortBy={setSortBy}
+        />
+      </div> */}
+      <div className="w-1/4 space-y-4">
+        <div className="w-full h-40 rounded-lg overflow-hidden shadow-sm border">
+          <iframe
+            title="Map"
+            src={`https://www.google.com/maps?q=${encodeURIComponent(searchTerm || "India")}&output=embed`}
+            width="100%"
+            height="100%"
+            allowFullScreen=""
+            loading="lazy"
+            className="rounded-lg"
+          />
+        </div>
         <HotelFilter
           roomTypes={roomTypes}
           setRoomTypes={setRoomTypes}
