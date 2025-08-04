@@ -61,7 +61,7 @@ const HotelFilter = ({
 
       <div className="mb-4">
         <h4 className="font-semibold text-sm mb-2">Price Range</h4>
-        {["0-500", "500-1000", "1000-2000", "2000-3000"].map((range, idx) => (
+        {["2000-3000", "3000-4000", "4000-5000", "5000-6000"].map((range, idx) => (
           <div className="flex items-center gap-2 mb-1" key={idx}>
             <input
               type="checkbox"
