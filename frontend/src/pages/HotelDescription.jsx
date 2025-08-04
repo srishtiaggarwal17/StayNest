@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { BOOKING_API_END_POINT, ROOM_API_END_POINT, STRIPE_PUBLISHABLE_KEY } from "@/utils/constant";
 import { useSelector } from "react-redux";
 import { loadStripe } from "@stripe/stripe-js";
+import { Wifi, Headphones, Clock, BadgeCheck } from "lucide-react";
 
 const features = [
   {
