@@ -13,7 +13,7 @@ const Home=()=>{
             <TrendingDestinations/>
             <BrowseByRoomType/>
             <LatestHotels/>
-            {/* <ExclusiveOffers/> */}
+            <ExclusiveOffers/>
             {/* <Newsletter/> */}
         </div>
     )
