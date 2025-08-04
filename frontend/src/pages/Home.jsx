@@ -14,7 +14,7 @@ const Home=()=>{
             <BrowseByRoomType/>
             <LatestHotels/>
             {/* <ExclusiveOffers/> */}
-            <Newsletter/>
+            {/* <Newsletter/> */}
         </div>
     )
 }
