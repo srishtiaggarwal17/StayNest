@@ -34,8 +34,11 @@ export default function TrendingDestinations() {
     <section className="py-10">
       <div className="mb-6 max-w-6xl mx-auto px-2">
         <h2 className="text-3xl font-bold">
-          Trending destinations with travellers from India
+          Trending destinations
         </h2>
+        <p className="text-gray-800 mt-1">
+          Explore the most popular cities people are booking right now!
+        </p>
       </div>
 
       {/* First row: 2 cities */}
@@ -92,4 +95,5 @@ export default function TrendingDestinations() {
     </section>
   );
 }
+
 
