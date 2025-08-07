@@ -60,45 +60,45 @@ const Hotels = () => {
 
         // Step 2: Check availability if dates are provided
         if (checkIn && checkOut) {
-          const availabilityChecks = allRooms.map(async (room) => {
-            try {
-              const { data } = await axios.post(
-                `${BOOKING_API_END_POINT}/check-availability`,
-                {
-                  room: room._id,
-                  checkInDate: checkIn,
-                  checkOutDate: checkOut,
-                  rooms: roomNos || 1,
-                }
-              );
+          // const availabilityChecks = allRooms.map(async (room) => {
+          //   try {
+          //     const { data } = await axios.post(
+          //       `${BOOKING_API_END_POINT}/check-availability`,
+          //       {
+          //         room: room._id,
+          //         checkInDate: checkIn,
+          //         checkOutDate: checkOut,
+          //         rooms: roomNos || 1,
+          //       }
+          //     );
 
-              return {
-                ...room,
-                availableRooms: data.availableRooms,
-                isAvailable: data.isAvailable,
-              };
-            } catch (err) {
-              console.error("Availability check failed:", err);
-              return { ...room, availableRooms: 0, isAvailable: false };
-            }
+          //     return {
+          //       ...room,
+          //       availableRooms: data.availableRooms,
+          //       isAvailable: data.isAvailable,
+          //     };
+          //   } catch (err) {
+          //     console.error("Availability check failed:", err);
+          //     return { ...room, availableRooms: 0, isAvailable: false };
+          //   }
+          // });
+          // const resultRooms = await Promise.all(availabilityChecks);
+          const roomIds = allRooms.map((room) => room._id);
+          const { data } = await axios.post(`${BOOKING_API_END_POINT}/check-multiple-availability`, {
+            roomIds,
+            checkInDate: checkIn,
+            checkOutDate: checkOut,
+            rooms: roomNos || 1,
           });
-          const resultRooms = await Promise.all(availabilityChecks);
-          // const roomIds = allRooms.map((room) => room._id);
-          // const { data } = await axios.post(`${BOOKING_API_END_POINT}/check-multiple-availability`, {
-          //   roomIds,
-          //   checkInDate: checkIn,
-          //   checkOutDate: checkOut,
-          //   rooms: roomNos || 1,
-          // });
-          // const availabilityMap = data.availability;
-          // const resultRooms = allRooms.map((room) => {
-          //   const availability = availabilityMap[room._id] || { isAvailable: false, availableRooms: 0 };
-          //   return {
-          //     ...room,
-          //     isAvailable: availability.isAvailable,
-          //     availableRooms: availability.availableRooms,
-          //   };
-          // });
+          const availabilityMap = data.availability;
+          const resultRooms = allRooms.map((room) => {
+            const availability = availabilityMap[room._id] || { isAvailable: false, availableRooms: 0 };
+            return {
+              ...room,
+              isAvailable: availability.isAvailable,
+              availableRooms: availability.availableRooms,
+            };
+          });
 
           // Optional filter by guests or room count
           const filteredByGuests = resultRooms.filter((room) => {
