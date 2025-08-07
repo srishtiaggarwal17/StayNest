@@ -79,6 +79,51 @@ export const checkAvailabilityApi = async (req, res) => {
   }
 };
 
+
+export const checkMultipleAvailability = async (req, res) => {
+  try {
+    const { roomIds, checkInDate, checkOutDate, rooms } = req.body;
+
+    if (!roomIds || !checkInDate || !checkOutDate || !rooms) {
+      return res.status(400).json({ success: false, message: "Missing required fields" });
+    }
+
+    const checkIn = new Date(checkInDate);
+    const checkOut = new Date(checkOutDate);
+
+    const roomsData = await Room.find({ _id: { $in: roomIds } });
+
+    const bookings = await Bookings.find({
+      room: { $in: roomIds },
+      checkInDate: { $lt: checkOut },
+      checkOutDate: { $gt: checkIn },
+    });
+
+    const availabilityMap = {};
+
+    roomIds.forEach((roomId) => {
+      const room = roomsData.find((r) => r._id.toString() === roomId);
+      const overlapping = bookings.filter((b) => b.room.toString() === roomId);
+      const totalBooked = overlapping.reduce((sum, b) => sum + b.rooms, 0);
+
+      const availableRooms = room ? room.roomCount - totalBooked : 0;
+
+      availabilityMap[roomId] = {
+        isAvailable: availableRooms >= Number(rooms),
+        availableRooms: Math.max(0, availableRooms),
+      };
+    });
+
+    return res.status(200).json({
+      success: true,
+      availability: availabilityMap,
+    });
+  } catch (error) {
+    console.error("Bulk Availability Error:", error);
+    res.status(500).json({ success: false, message: "Server Error" });
+  }
+};
+
 export const createBooking = async (req, res) => {
   try {
     const { room, checkInDate, checkOutDate, guests,rooms } = req.body;
