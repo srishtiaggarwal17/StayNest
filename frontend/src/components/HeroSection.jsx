@@ -1,5 +1,3 @@
-
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -38,7 +36,7 @@ const HeroSection = () => {
         <span className="bg-blue-400 text-white text-sm px-4 py-1 rounded-full mb-4">
           The Ultimate Hotel Experience
         </span>
-        <h1 className="relative z-20 h-full flex flex-col justify-center items-start text-left px-4 sm:px-6 md:px-20 max-w-5xl">
+        <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4 leading-tight sm:leading-tight max-w-2xl">
           Discover Your Perfect <br />
           Gateway Destination
         </h1>
