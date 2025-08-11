@@ -158,82 +158,10 @@ const Hotels = () => {
 
     setFilteredRooms(filtered);
   }, [roomTypes, priceRanges, sortBy, rooms]);
-
   return (
-    <div className="max-w-7xl mx-auto p-6 mt-16 flex gap-6">
-      <div className="w-3/4">
-        <h1 className="text-4xl font-semibold mb-2">Available Rooms</h1>
-        <p className="text-gray-500 mb-2">
-          Explore all rooms from different hotels across locations.
-        </p>
-
-        <p className="text-gray-600 text-sm mb-4">
-          {checkIn && `Check-in: ${checkIn}`}{" "}
-          {checkOut && `| Check-out: ${checkOut}`}{" "}
-          {guests && `| Guests: ${guests}`}{" "}
-          {roomNos && `| Rooms: ${roomNos}`}
-        </p>
-
-        <Input
-          type="text"
-          placeholder="Search by hotel, address, or room type..."
-          className="mb-6"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-        {isLoading ? (
-          <div className="space-y-6">
-          {[...Array(2)].map((_, idx) => (
-            <div key={idx}
-              className="flex gap-6 p-4 rounded-xl bg-white shadow border border-gray-200 animate-pulse"
-            >
-              <div className="h-40 w-64 bg-gray-300 rounded-xl"></div>
-              <div className="flex flex-col justify-between flex-1 py-1">
-                <div className="space-y-2">
-                  <div className="h-4 bg-gray-300 rounded w-20" />
-                    <div className="h-5 bg-gray-400 rounded w-3/4" />
-                    <div className="flex items-center gap-3">
-                      <div className="h-4 w-20 bg-gray-300 rounded" />
-                      <div className="h-3 w-16 bg-gray-200 rounded" />
-                    </div>
-                    <div className="h-3 bg-gray-200 rounded w-full" />
-                    <div className="h-3 bg-gray-200 rounded w-4/5" />
-                    <div className="flex gap-2 mt-3">
-                      <div className="h-6 w-24 bg-gray-200 rounded-full" />
-                      <div className="h-6 w-24 bg-gray-200 rounded-full" />
-                      <div className="h-6 w-24 bg-gray-200 rounded-full" />
-                    </div>
-                  </div>
-                  <div className="h-4 w-24 bg-gray-300 rounded mt-4" />
-                </div>
-              </div>
-            ))}
-          </div>
-          ) : filteredRooms.length === 0 ? (
-            <span>No rooms found.</span>
-          ) : (
-            filteredRooms.map((room) => (
-             <HotelCard
-              key={room._id}
-              room={room}
-              isAvailable={room.isAvailable}
-              availableRooms={room.availableRooms}
-            />
-          ))
-        )}
-      </div>
-
-{/*       <div className="w-1/4">
-        <HotelFilter
-          roomTypes={roomTypes}
-          setRoomTypes={setRoomTypes}
-          priceRanges={priceRanges}
-          setPriceRanges={setPriceRanges}
-          sortBy={sortBy}
-          setSortBy={setSortBy}
-        />
-      </div> */}
-      <div className="w-1/4 space-y-4">
+    <div className="max-w-7xl mx-auto p-4 mt-16">
+      {/* Top section for small screens (Map + Filters stacked) */}
+      <div className="flex flex-col gap-4 md:hidden mb-6">
         <div className="w-full h-40 rounded-lg overflow-hidden shadow-sm border">
           <iframe
             title="Map"
@@ -254,9 +182,171 @@ const Hotels = () => {
           setSortBy={setSortBy}
         />
       </div>
+
+      <div className="flex flex-col md:flex-row gap-6">
+        {/* Main Content */}
+        <div className="md:w-3/4">
+          <h1 className="text-3xl font-semibold mb-2">Available Rooms</h1>
+          <p className="text-gray-500 mb-2">Explore all rooms from different hotels across locations.</p>
+          <p className="text-gray-600 text-sm mb-4">
+            {checkIn && `Check-in: ${checkIn}`}{" "}
+            {checkOut && `| Check-out: ${checkOut}`}{" "}
+            {guests && `| Guests: ${guests}`}{" "}
+            {roomNos && `| Rooms: ${roomNos}`}
+          </p>
+
+          <Input
+            type="text"
+            placeholder="Search by hotel, address, or room type..."
+            className="mb-6"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+
+          {isLoading ? (
+            <div className="space-y-6">{/* Skeleton loader */}</div>
+          ) : filteredRooms.length === 0 ? (
+            <span>No rooms found.</span>
+          ) : (
+            filteredRooms.map((room) => (
+              <HotelCard
+                key={room._id}
+                room={room}
+                isAvailable={room.isAvailable}
+                availableRooms={room.availableRooms}
+              />
+            ))
+          )}
+        </div>
+
+        {/* Sidebar for medium+ screens */}
+        <div className="hidden md:block md:w-1/4 space-y-4">
+          <div className="w-full h-40 rounded-lg overflow-hidden shadow-sm border">
+            <iframe
+              title="Map"
+              src={`https://www.google.com/maps?q=${encodeURIComponent(searchTerm || "India")}&output=embed`}
+              width="100%"
+              height="100%"
+              allowFullScreen=""
+              loading="lazy"
+              className="rounded-lg"
+            />
+          </div>
+          <HotelFilter
+            roomTypes={roomTypes}
+            setRoomTypes={setRoomTypes}
+            priceRanges={priceRanges}
+            setPriceRanges={setPriceRanges}
+            sortBy={sortBy}
+            setSortBy={setSortBy}
+          />
+        </div>
+      </div>
     </div>
   );
 };
 
 export default Hotels;
 
+
+//   return (
+//     <div className="max-w-7xl mx-auto p-6 mt-16 flex gap-6">
+//       <div className="w-3/4">
+//         <h1 className="text-4xl font-semibold mb-2">Available Rooms</h1>
+//         <p className="text-gray-500 mb-2">
+//           Explore all rooms from different hotels across locations.
+//         </p>
+
+//         <p className="text-gray-600 text-sm mb-4">
+//           {checkIn && `Check-in: ${checkIn}`}{" "}
+//           {checkOut && `| Check-out: ${checkOut}`}{" "}
+//           {guests && `| Guests: ${guests}`}{" "}
+//           {roomNos && `| Rooms: ${roomNos}`}
+//         </p>
+
+//         <Input
+//           type="text"
+//           placeholder="Search by hotel, address, or room type..."
+//           className="mb-6"
+//           value={searchTerm}
+//           onChange={(e) => setSearchTerm(e.target.value)}
+//         />
+//         {isLoading ? (
+//           <div className="space-y-6">
+//           {[...Array(2)].map((_, idx) => (
+//             <div key={idx}
+//               className="flex gap-6 p-4 rounded-xl bg-white shadow border border-gray-200 animate-pulse"
+//             >
+//               <div className="h-40 w-64 bg-gray-300 rounded-xl"></div>
+//               <div className="flex flex-col justify-between flex-1 py-1">
+//                 <div className="space-y-2">
+//                   <div className="h-4 bg-gray-300 rounded w-20" />
+//                     <div className="h-5 bg-gray-400 rounded w-3/4" />
+//                     <div className="flex items-center gap-3">
+//                       <div className="h-4 w-20 bg-gray-300 rounded" />
+//                       <div className="h-3 w-16 bg-gray-200 rounded" />
+//                     </div>
+//                     <div className="h-3 bg-gray-200 rounded w-full" />
+//                     <div className="h-3 bg-gray-200 rounded w-4/5" />
+//                     <div className="flex gap-2 mt-3">
+//                       <div className="h-6 w-24 bg-gray-200 rounded-full" />
+//                       <div className="h-6 w-24 bg-gray-200 rounded-full" />
+//                       <div className="h-6 w-24 bg-gray-200 rounded-full" />
+//                     </div>
+//                   </div>
+//                   <div className="h-4 w-24 bg-gray-300 rounded mt-4" />
+//                 </div>
+//               </div>
+//             ))}
+//           </div>
+//           ) : filteredRooms.length === 0 ? (
+//             <span>No rooms found.</span>
+//           ) : (
+//             filteredRooms.map((room) => (
+//              <HotelCard
+//               key={room._id}
+//               room={room}
+//               isAvailable={room.isAvailable}
+//               availableRooms={room.availableRooms}
+//             />
+//           ))
+//         )}
+//       </div>
+
+// {/*       <div className="w-1/4">
+//         <HotelFilter
+//           roomTypes={roomTypes}
+//           setRoomTypes={setRoomTypes}
+//           priceRanges={priceRanges}
+//           setPriceRanges={setPriceRanges}
+//           sortBy={sortBy}
+//           setSortBy={setSortBy}
+//         />
+//       </div> */}
+//       <div className="w-1/4 space-y-4">
+//         <div className="w-full h-40 rounded-lg overflow-hidden shadow-sm border">
+//           <iframe
+//             title="Map"
+//             src={`https://www.google.com/maps?q=${encodeURIComponent(searchTerm || "India")}&output=embed`}
+//             width="100%"
+//             height="100%"
+//             allowFullScreen=""
+//             loading="lazy"
+//             className="rounded-lg"
+//           />
+//         </div>
+//         <HotelFilter
+//           roomTypes={roomTypes}
+//           setRoomTypes={setRoomTypes}
+//           priceRanges={priceRanges}
+//           setPriceRanges={setPriceRanges}
+//           sortBy={sortBy}
+//           setSortBy={setSortBy}
+//         />
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default Hotels;
+   
