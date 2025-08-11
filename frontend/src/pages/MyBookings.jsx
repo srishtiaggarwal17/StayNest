@@ -53,15 +53,15 @@ const MyBookings = () => {
       console.error(error);
     }
   };
-
   return (
     <div className="max-w-7xl mx-auto px-4 py-10 pt-28">
       <h1 className="text-3xl font-bold mb-4">My Bookings</h1>
       <p className="text-gray-600 mb-6">
-        Easily manage your past, current, and upcoming hotel reservations in one place. Plan your trips seamlessly with just a few clicks.
+        Easily manage your past, current, and upcoming hotel reservations in one place.
       </p>
 
-      <div className="w-full grid grid-cols-12 text-left font-medium text-gray-700 border-b pb-3 mb-4">
+      {/* Desktop Header */}
+      <div className="hidden md:grid grid-cols-12 text-left font-medium text-gray-700 border-b pb-3 mb-4">
         <div className="col-span-6">Hotels</div>
         <div className="col-span-4">Date & Timings</div>
         <div className="col-span-2">Payment</div>
@@ -70,30 +70,28 @@ const MyBookings = () => {
       {bookings.map((booking) => (
         <div
           key={booking._id}
-          className="w-full grid grid-cols-12 items-start gap-4 border-b py-4"
+          className="border-b py-4 flex flex-col gap-4 md:grid md:grid-cols-12 md:items-start md:gap-4"
         >
-          <div className="col-span-6 flex items-center gap-4">
+          {/* Hotel Info */}
+          <div className="md:col-span-6 flex flex-col sm:flex-row items-start gap-4">
             <img
               src={booking.room.images?.[0] || "/default.jpg"}
               alt={booking.hotel.name}
-              className="w-[290px] h-[140px] object-cover rounded-lg"
+              className="w-full sm:w-[200px] h-[140px] object-cover rounded-lg"
             />
             <div>
-              <h2 className="font-semibold">{booking.hotel.name}  ({booking.room.type || "Room"})</h2>
-              <p className="text-sm text-gray-500">
-                {booking.hotel.city }
+              <h2 className="font-semibold text-lg">
+                {booking.hotel.name} ({booking.room.type || "Room"})
+              </h2>
+              <p className="text-sm text-gray-500">{booking.hotel.city}</p>
+              <p className="text-sm text-gray-500 flex items-center gap-1 mt-1">
+                <MapPin size={14} /> {booking.hotel.address}
               </p>
               <p className="text-sm text-gray-500 flex items-center gap-1 mt-1">
-                <MapPin size={14} />
-                {booking.hotel.address}
+                <Users size={14} /> Guests: {booking.guests}
               </p>
               <p className="text-sm text-gray-500 flex items-center gap-1 mt-1">
-                <Users size={14} />
-                Guests: {booking.guests}
-              </p>
-              <p className="text-sm text-gray-500 flex items-center gap-1 mt-1">
-                <DoorOpen size={14} />
-                Rooms: {booking.rooms}
+                <DoorOpen size={14} /> Rooms: {booking.rooms}
               </p>
               <p className="text-sm font-semibold mt-1">
                 Total: ₹{booking.totalPrice}
@@ -101,32 +99,28 @@ const MyBookings = () => {
             </div>
           </div>
 
-          <div className="col-span-4 text-sm text-gray-700">
+          {/* Date & Timings */}
+          <div className="md:col-span-4 text-sm text-gray-700">
             <p>
-              Check-In:{" "}
-              <span className="font-medium">
-                {new Date(booking.checkInDate).toDateString()}
-              </span>
+              <span className="font-medium md:hidden">Check-In: </span>
+              {new Date(booking.checkInDate).toDateString()}
             </p>
             <p>
-              Check-Out:{" "}
-              <span className="font-medium">
-                {new Date(booking.checkOutDate).toDateString()}
-              </span>
+              <span className="font-medium md:hidden">Check-Out: </span>
+              {new Date(booking.checkOutDate).toDateString()}
             </p>
           </div>
 
-          <div className="col-span-2">
+          {/* Payment Info */}
+          <div className="md:col-span-2">
             {booking.isPaid ? (
               <p className="flex items-center gap-2 text-green-600 text-sm">
-                <span className="w-2 h-2 rounded-full bg-green-600"></span>
-                Paid
+                <span className="w-2 h-2 rounded-full bg-green-600"></span> Paid
               </p>
             ) : (
               <div className="flex flex-col gap-2">
                 <p className="flex items-center gap-2 text-red-600 text-sm">
-                  <span className="w-2 h-2 rounded-full bg-red-600"></span>
-                  Unpaid
+                  <span className="w-2 h-2 rounded-full bg-red-600"></span> Unpaid
                 </p>
                 <Button
                   variant="outline"
@@ -145,3 +139,95 @@ const MyBookings = () => {
 };
 
 export default MyBookings;
+
+//   return (
+//     <div className="max-w-7xl mx-auto px-4 py-10 pt-28">
+//       <h1 className="text-3xl font-bold mb-4">My Bookings</h1>
+//       <p className="text-gray-600 mb-6">
+//         Easily manage your past, current, and upcoming hotel reservations in one place. Plan your trips seamlessly with just a few clicks.
+//       </p>
+
+//       <div className="w-full grid grid-cols-12 text-left font-medium text-gray-700 border-b pb-3 mb-4">
+//         <div className="col-span-6">Hotels</div>
+//         <div className="col-span-4">Date & Timings</div>
+//         <div className="col-span-2">Payment</div>
+//       </div>
+
+//       {bookings.map((booking) => (
+//         <div
+//           key={booking._id}
+//           className="w-full grid grid-cols-12 items-start gap-4 border-b py-4"
+//         >
+//           <div className="col-span-6 flex items-center gap-4">
+//             <img
+//               src={booking.room.images?.[0] || "/default.jpg"}
+//               alt={booking.hotel.name}
+//               className="w-[290px] h-[140px] object-cover rounded-lg"
+//             />
+//             <div>
+//               <h2 className="font-semibold">{booking.hotel.name}  ({booking.room.type || "Room"})</h2>
+//               <p className="text-sm text-gray-500">
+//                 {booking.hotel.city }
+//               </p>
+//               <p className="text-sm text-gray-500 flex items-center gap-1 mt-1">
+//                 <MapPin size={14} />
+//                 {booking.hotel.address}
+//               </p>
+//               <p className="text-sm text-gray-500 flex items-center gap-1 mt-1">
+//                 <Users size={14} />
+//                 Guests: {booking.guests}
+//               </p>
+//               <p className="text-sm text-gray-500 flex items-center gap-1 mt-1">
+//                 <DoorOpen size={14} />
+//                 Rooms: {booking.rooms}
+//               </p>
+//               <p className="text-sm font-semibold mt-1">
+//                 Total: ₹{booking.totalPrice}
+//               </p>
+//             </div>
+//           </div>
+
+//           <div className="col-span-4 text-sm text-gray-700">
+//             <p>
+//               Check-In:{" "}
+//               <span className="font-medium">
+//                 {new Date(booking.checkInDate).toDateString()}
+//               </span>
+//             </p>
+//             <p>
+//               Check-Out:{" "}
+//               <span className="font-medium">
+//                 {new Date(booking.checkOutDate).toDateString()}
+//               </span>
+//             </p>
+//           </div>
+
+//           <div className="col-span-2">
+//             {booking.isPaid ? (
+//               <p className="flex items-center gap-2 text-green-600 text-sm">
+//                 <span className="w-2 h-2 rounded-full bg-green-600"></span>
+//                 Paid
+//               </p>
+//             ) : (
+//               <div className="flex flex-col gap-2">
+//                 <p className="flex items-center gap-2 text-red-600 text-sm">
+//                   <span className="w-2 h-2 rounded-full bg-red-600"></span>
+//                   Unpaid
+//                 </p>
+//                 <Button
+//                   variant="outline"
+//                   className="w-fit text-xs px-4 py-2"
+//                   onClick={() => handlePayment(booking)}
+//                 >
+//                   Pay Now
+//                 </Button>
+//               </div>
+//             )}
+//           </div>
+//         </div>
+//       ))}
+//     </div>
+//   );
+// };
+
+// export default MyBookings;
