@@ -67,11 +67,11 @@ export const createRoom = async (req, res) => {
 export const getAllRooms = async (req, res) => {
   try {
     const { searchTerm, checkInDate, checkOutDate, roomNos, guests } = req.query;
-    let filter = {};
+    let filter = {isAvailable: true};
     if (searchTerm) {
       filter = {
         ...filter,
-        isAvailable: true,
+        // isAvailable: true,
       };
     }
     let rooms = await Room.find(filter)
