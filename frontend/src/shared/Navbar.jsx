@@ -234,7 +234,7 @@ const Navbar = () => {
               <Link to="/login">
                 <Button
                   className={`${
-                    isHome ? "bg-white text-black" : "bg-black text-white"
+                    "bg-white text-black" 
                   } hover:opacity-80`}
                   variant="outline"
                 >
