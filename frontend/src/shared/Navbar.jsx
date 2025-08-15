@@ -94,7 +94,7 @@
 //         {!user ? (
 //           <div className="flex items-center gap-2">
 //             <Link to="/login">
-//               <Button className={`${isHome ? "bg-white text-black" : "bg-black text-white"} hover:opacity-80`} variant="outline">Login</Button>
+//               <Button className={`${ "bg-white text-black" } hover:opacity-80`} variant="outline">Login</Button>
 //             </Link>
 //             <Link to="/signup">
 //               <Button className={`${isHome ? "bg-black text-white" : "bg-gray-800 text-white"} hover:opacity-90`}>Signup</Button>
