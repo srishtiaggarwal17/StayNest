@@ -208,6 +208,7 @@ const Navbar = () => {
           {[
             { path: "/", label: "Home" },
             { path: "/hotels", label: "Hotels" },
+            { path: "/browse", label: "Browse" },
             { path: "/experience", label: "Experience" },
             { path: "/about", label: "About" },
           ].map((item) => (
