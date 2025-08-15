@@ -36,7 +36,7 @@ const HeroSection = () => {
         <span className="bg-blue-400 text-white text-sm px-4 py-1 rounded-full mb-4">
           The Ultimate Hotel Experience
         </span>
-        <h1 className="text-4xl md:text-6xl font-bold mb-4 leading-tight max-w-2xl">
+        <h1 className="text-4xl md:text-5xl font-bold mb-4 leading-tight max-w-2xl">
           Discover Your Perfect <br />
           Gateway Destination
         </h1>
