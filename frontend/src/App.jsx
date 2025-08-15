@@ -18,6 +18,7 @@ import Experience from "./pages/Experience";
 import Footer from "./shared/Footer";
 import Profile from "./pages/Profile";
 import PaymentSuccess from "./pages/PaymentSuccess";
+import Browse from "./pages/Browse";
 
 const App=()=>{
   const isOwnerPath=useLocation().pathname.includes("owner")
@@ -31,6 +32,7 @@ const App=()=>{
           <Route path='/login' element={<Login/>} />
           <Route path='/signup' element={<Signup/>} />
           <Route path='/hotels' element={<Hotels/>} />
+          <Route path='/browse' element={<Browse/>} />
           <Route path='/experience' element={<Experience/>} />
           <Route path='/about' element={<About/>} />
           <Route path='/description/:id' element={<HotelDescription/>} />
