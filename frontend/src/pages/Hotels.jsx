@@ -282,19 +282,19 @@
 
 
 import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+// import { useLocation } from "react-router-dom";
 import HotelCard from "@/components/HotelCard";
 import HotelFilter from "@/components/HotelFilter";
 import axios from "axios";
 import { ROOM_API_END_POINT } from "@/utils/constant";
 import { Input } from "@/components/ui/input";
 
-const useQuery = () => new URLSearchParams(useLocation().search);
+// const useQuery = () => new URLSearchParams(useLocation().search);
 
 const Hotels = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const query = useQuery();
-  const destinationQuery = query.get("destination") || "";
+  // const query = useQuery();
+  // const destinationQuery = query.get("destination") || "";
 
   const [rooms, setRooms] = useState([]);
   const [filteredRooms, setFilteredRooms] = useState([]);
@@ -302,35 +302,33 @@ const Hotels = () => {
   const [roomTypes, setRoomTypes] = useState([]);
   const [priceRanges, setPriceRanges] = useState([]);
   const [sortBy, setSortBy] = useState("");
-  const [searchTerm, setSearchTerm] = useState(destinationQuery);
+  // const [searchTerm, setSearchTerm] = useState(destinationQuery);
 
   useEffect(() => {
     const fetchRooms = async () => {
       setIsLoading(true); 
       try {
         const res = await axios.get(`${ROOM_API_END_POINT}/getRooms`, {
-          params: {
-            searchTerm
-          },
+          withCredentials:true
         });
         let allRooms = res.data.rooms;
 
         // Step 1: Search filter
-        if (searchTerm.trim() !== "") {
-          const lowerSearch = searchTerm.toLowerCase();
-          allRooms = allRooms.filter((room) => {
-            const hotelName = room.hotel?.name?.toLowerCase() || "";
-            const address = room.hotel?.address?.toLowerCase() || "";
-            const type = room.type?.toLowerCase() || "";
-            const city = room.hotel?.city?.toLowerCase() || "";
-            return (
-              hotelName.includes(lowerSearch) ||
-              address.includes(lowerSearch) ||
-              type.includes(lowerSearch) ||
-              city.includes(lowerSearch)
-            );
-          });
-        }
+        // if (searchTerm.trim() !== "") {
+        //   const lowerSearch = searchTerm.toLowerCase();
+        //   allRooms = allRooms.filter((room) => {
+        //     const hotelName = room.hotel?.name?.toLowerCase() || "";
+        //     const address = room.hotel?.address?.toLowerCase() || "";
+        //     const type = room.type?.toLowerCase() || "";
+        //     const city = room.hotel?.city?.toLowerCase() || "";
+        //     return (
+        //       hotelName.includes(lowerSearch) ||
+        //       address.includes(lowerSearch) ||
+        //       type.includes(lowerSearch) ||
+        //       city.includes(lowerSearch)
+        //     );
+        //   });
+        // }
         setRooms(allRooms);
       } catch (err) {
         console.error(err);
@@ -338,7 +336,7 @@ const Hotels = () => {
       setIsLoading(false);
     };
     fetchRooms();
-  }, [searchTerm]);
+  }, []);
 
   useEffect(() => {
     let filtered = [...rooms];
@@ -374,7 +372,7 @@ const Hotels = () => {
         <div className="w-full h-40 rounded-lg overflow-hidden shadow-sm border">
           <iframe
             title="Map"
-            src={`https://www.google.com/maps?q=${encodeURIComponent(searchTerm || "India")}&output=embed`}
+            src={`https://www.google.com/maps?q=${encodeURIComponent("India")}&output=embed`}
             width="100%"
             height="100%"
             allowFullScreen=""
@@ -396,21 +394,15 @@ const Hotels = () => {
         {/* Main Content */}
         <div className="md:w-3/4">
           <h1 className="text-3xl font-semibold mb-2">Available Rooms</h1>
-          <p className="text-gray-500 mb-2">Explore all rooms from different hotels across locations.</p>
-          {/* <p className="text-gray-600 text-sm mb-4">
-            {checkIn && `Check-in: ${checkIn}`}{" "}
-            {checkOut && `| Check-out: ${checkOut}`}{" "}
-            {guests && `| Guests: ${guests}`}{" "}
-            {roomNos && `| Rooms: ${roomNos}`}
-          </p> */}
+          <p className="text-gray-500 mb-8">Explore all rooms from different hotels across locations.</p>
 
-          <Input
+{/*           <Input
             type="text"
             placeholder="Search by hotel, address, or room type..."
             className="mb-6"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-          />
+          /> */}
 
           {isLoading ? (
           <div className="space-y-6">
@@ -459,7 +451,7 @@ const Hotels = () => {
           <div className="w-full h-40 rounded-lg overflow-hidden shadow-sm border">
             <iframe
               title="Map"
-              src={`https://www.google.com/maps?q=${encodeURIComponent(searchTerm || "India")}&output=embed`}
+              src={`https://www.google.com/maps?q=${encodeURIComponent("India")}&output=embed`}
               width="100%"
               height="100%"
               allowFullScreen=""
