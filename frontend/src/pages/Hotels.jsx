@@ -288,6 +288,7 @@ import HotelFilter from "@/components/HotelFilter";
 import axios from "axios";
 import { ROOM_API_END_POINT } from "@/utils/constant";
 import { Input } from "@/components/ui/input";
+import { motion, AnimatePresence } from "framer-motion";
 
 // const useQuery = () => new URLSearchParams(useLocation().search);
 
@@ -405,44 +406,27 @@ const Hotels = () => {
           /> */}
 
           {isLoading ? (
-          <div className="space-y-6">
-          {[...Array(2)].map((_, idx) => (
-            <div key={idx}
-              className="flex gap-6 p-4 rounded-xl bg-white shadow border border-gray-200 animate-pulse"
-            >
-              <div className="h-40 w-64 bg-gray-300 rounded-xl"></div>
-              <div className="flex flex-col justify-between flex-1 py-1">
-                <div className="space-y-2">
-                  <div className="h-4 bg-gray-300 rounded w-20" />
-                    <div className="h-5 bg-gray-400 rounded w-3/4" />
-                    <div className="flex items-center gap-3">
-                      <div className="h-4 w-20 bg-gray-300 rounded" />
-                      <div className="h-3 w-16 bg-gray-200 rounded" />
-                    </div>
-                    <div className="h-3 bg-gray-200 rounded w-full" />
-                    <div className="h-3 bg-gray-200 rounded w-4/5" />
-                    <div className="flex gap-2 mt-3">
-                      <div className="h-6 w-24 bg-gray-200 rounded-full" />
-                      <div className="h-6 w-24 bg-gray-200 rounded-full" />
-                      <div className="h-6 w-24 bg-gray-200 rounded-full" />
-                    </div>
-                  </div>
-                  <div className="h-4 w-24 bg-gray-300 rounded mt-4" />
-                </div>
-              </div>
-            ))}
-          </div>
+            <span className="text-gray-500">Loading rooms...</span>
           ) : filteredRooms.length === 0 ? (
             <span>No rooms found.</span>
           ) : (
-            filteredRooms.map((room) => (
-              <HotelCard
-                key={room._id}
-                room={room}
-                isAvailable={room.isAvailable}
-                availableRooms={room.availableRooms}
-              />
-            ))
+            <AnimatePresence>
+              {filteredRooms.map((room) => (
+                <motion.div
+                  key={room._id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.4 }}
+                >
+                  <HotelCard
+                    room={room}
+                    isAvailable={room.isAvailable}
+                    availableRooms={room.availableRooms}
+                  />
+                </motion.div>
+              ))}
+            </AnimatePresence>
           )}
         </div>
 
