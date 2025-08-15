@@ -23,7 +23,7 @@ const roomTypes = [
 const BrowseByRoomType = () => {
   const navigate = useNavigate();
   const handleCityClick = (type) => {
-    navigate(`/hotels?destination=${encodeURIComponent(type)}`);
+    navigate(`/browse?destination=${encodeURIComponent(type)}`);
   };
   return (
     <section className="max-w-6xl mx-auto px-4 ">
