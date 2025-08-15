@@ -151,7 +151,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {User2,LogOut,CalendarCheck,Menu,X,Home,Building2,Globe2,Info} from "lucide-react";
+import {User2,LogOut,CalendarCheck,Menu,X,Home,Building2,Globe2,Info,Search} from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { USER_API_END_POINT } from "@/utils/constant";
@@ -340,6 +340,7 @@ const Navbar = () => {
             {[
               { path: "/", label: "Home", icon: <Home size={18} /> },
               { path: "/hotels", label: "Hotels", icon: <Building2 size={18} /> },
+              { path: "/browse", label: "Browse", icon: <Search size={18} /> },
               { path: "/experience", label: "Experience", icon: <Globe2 size={18} /> },
               { path: "/about", label: "About", icon: <Info size={18} /> },
             ].map((item) => (
