@@ -50,20 +50,20 @@ export const createRoom = async (req, res) => {
 
 
 // Get all rooms
-// export const getAllRooms = async (req, res) => {
-//   try {
-//     const rooms = await Room.find({isAvailable:true}).populate({
-//         path:'hotel',
-//         populate:{
-//             path:'owner',
-//             select:'image'
-//         }
-//     }).sort({createdAt:-1})
-//     res.json({success:true,rooms})
-//   } catch (error) {
-//     res.status(500).json({ success: false, message: error.message });
-//   }
-// };
+export const getAllRooms = async (req, res) => {
+  try {
+    const rooms = await Room.find({isAvailable:true}).populate({
+        path:'hotel',
+        populate:{
+            path:'owner',
+            select:'image'
+        }
+    }).sort({createdAt:-1})
+    res.json({success:true,rooms})
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
 export const getAllRooms = async (req, res) => {
   try {
     const { searchTerm, checkInDate, checkOutDate, roomNos, guests } = req.query;
