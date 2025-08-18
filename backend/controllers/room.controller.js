@@ -50,7 +50,7 @@ export const createRoom = async (req, res) => {
 
 
 // Get all rooms
-export const getAllRooms = async (req, res) => {
+export const getRooms = async (req, res) => {
   try {
     const rooms = await Room.find({isAvailable:true}).populate({
         path:'hotel',
