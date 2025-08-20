@@ -294,7 +294,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const Hotels = () => {
   const [isLoading, setIsLoading] = useState(false);
-  onst [loadingMore, setLoadingMore] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
   // const query = useQuery();
   // const destinationQuery = query.get("destination") || "";
 
