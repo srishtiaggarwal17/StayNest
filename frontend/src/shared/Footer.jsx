@@ -94,7 +94,7 @@ const Footer = () => {
       </div>
 
       <div className="text-center py-4 text-sm border-t text-gray-600">
-        © {new Date().getFullYear()} QuickStay. All rights reserved.
+        © {new Date().getFullYear()} StayNest. All rights reserved.
       </div>
     </footer>
   );
