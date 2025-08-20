@@ -294,6 +294,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const Hotels = () => {
   const [isLoading, setIsLoading] = useState(false);
+  onst [loadingMore, setLoadingMore] = useState(false);
   // const query = useQuery();
   // const destinationQuery = query.get("destination") || "";
 
@@ -305,39 +306,85 @@ const Hotels = () => {
   const [sortBy, setSortBy] = useState("");
   // const [searchTerm, setSearchTerm] = useState(destinationQuery);
 
-  useEffect(() => {
-    const fetchRooms = async () => {
-      setIsLoading(true); 
-      try {
-        const res = await axios.get(`${ROOM_API_END_POINT}/getR`, {
-          withCredentials:true
-        });
-        let allRooms = res.data.rooms;
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
 
-        // Step 1: Search filter
-        // if (searchTerm.trim() !== "") {
-        //   const lowerSearch = searchTerm.toLowerCase();
-        //   allRooms = allRooms.filter((room) => {
-        //     const hotelName = room.hotel?.name?.toLowerCase() || "";
-        //     const address = room.hotel?.address?.toLowerCase() || "";
-        //     const type = room.type?.toLowerCase() || "";
-        //     const city = room.hotel?.city?.toLowerCase() || "";
-        //     return (
-        //       hotelName.includes(lowerSearch) ||
-        //       address.includes(lowerSearch) ||
-        //       type.includes(lowerSearch) ||
-        //       city.includes(lowerSearch)
-        //     );
-        //   });
-        // }
-        setRooms(allRooms);
-      } catch (err) {
-        console.error(err);
+  // useEffect(() => {
+  //   const fetchRooms = async () => {
+  //     setIsLoading(true); 
+  //     try {
+  //       const res = await axios.get(`${ROOM_API_END_POINT}/getR`, {
+  //         withCredentials:true
+  //       });
+  //       let allRooms = res.data.rooms;
+  //       setRooms(allRooms);
+  //     } catch (err) {
+  //       console.error(err);
+  //     }
+  //     setIsLoading(false);
+  //   };
+  //   fetchRooms();
+  // }, []);
+  const fetchRooms = async (pageNum = 1) => {
+    if (pageNum === 1) setIsLoading(true);
+    else setLoadingMore(true);
+
+    try {
+      const res = await axios.get(
+        `${ROOM_API_END_POINT}/getRooms`,
+        { withCredentials: true }
+      );
+
+      const newRooms = res.data.rooms;
+
+      if (pageNum === 1) {
+        setRooms(newRooms);
+      } else {
+        setRooms((prev) => [...prev, ...newRooms]);
       }
-      setIsLoading(false);
-    };
-    fetchRooms();
+
+      // check if more pages available
+      if (pageNum >= res.data.totalPages) {
+        setHasMore(false);
+      } else {
+        setHasMore(true);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+
+    setIsLoading(false);
+    setLoadingMore(false);
+  };
+
+  // ✅ First load
+  useEffect(() => {
+    fetchRooms(1);
   }, []);
+
+  // ✅ Infinite scroll listener
+  useEffect(() => {
+    const handleScroll = () => {
+      if (
+        window.innerHeight + document.documentElement.scrollTop + 50 >=
+        document.documentElement.scrollHeight
+      ) {
+        if (hasMore && !loadingMore) {
+          setPage((prev) => prev + 1);
+        }
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [hasMore, loadingMore]);
+
+  // ✅ Fetch next page when `page` changes
+  useEffect(() => {
+    if (page > 1) {
+      fetchRooms(page);
+    }
+  }, [page]);
 
   useEffect(() => {
     let filtered = [...rooms];
@@ -452,6 +499,9 @@ const Hotels = () => {
                   />
                 </motion.div>
               ))}
+              {loadingMore && (
+                <div className="text-center py-6 text-gray-500">Loading more...</div>
+              )}
             </AnimatePresence>
           )}
         </div>
