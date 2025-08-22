@@ -50,16 +50,45 @@ export const createRoom = async (req, res) => {
 
 
 // Get all rooms
+// export const getRooms = async (req, res) => {
+//   try {
+//     const rooms = await Room.find({isAvailable:true}).populate({
+//         path:'hotel',
+//         populate:{
+//             path:'owner',
+//             select:'image'
+//         }
+//     }).sort({createdAt:-1})
+//     res.json({success:true,rooms})
+//   } catch (error) {
+//     res.status(500).json({ success: false, message: error.message });
+//   }
+// };
 export const getRooms = async (req, res) => {
   try {
-    const rooms = await Room.find({isAvailable:true}).populate({
-        path:'hotel',
-        populate:{
-            path:'owner',
-            select:'image'
-        }
-    }).sort({createdAt:-1})
-    res.json({success:true,rooms})
+    let { page = 1, limit = 6 } = req.query;
+    page = parseInt(page);
+    limit = parseInt(limit);
+    const skip = (page - 1) * limit;
+    const totalRooms = await Room.countDocuments({ isAvailable: true });
+    const totalPages = Math.ceil(totalRooms / limit);
+
+    const rooms = await Room.find({ isAvailable: true }).populate({
+        path: "hotel",
+        populate: {
+          path: "owner",
+          select: "image",
+        },
+      }).sort({ createdAt: -1 }).skip(skip).limit(limit);
+
+    res.json({success: true,rooms,
+      pagination: {
+        total: totalRooms,
+        pages: totalPages,
+        currentPage: page,
+        limit,
+      },
+    });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
