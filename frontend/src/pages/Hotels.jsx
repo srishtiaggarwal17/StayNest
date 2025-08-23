@@ -279,7 +279,7 @@ const Hotels = () => {
     const fetchRooms = async () => {
       setIsLoading(true);
       try {
-        const res = await axios.get(`${ROOM_API_END_POINT}/getRooms`, {
+        const res = await axios.get(`${ROOM_API_END_POINT}/getR`, {
           withCredentials: true,
           params: { page, limit },
         });
