@@ -70,6 +70,7 @@ export const getRooms = async (req, res) => {
     page = parseInt(page);
     limit = parseInt(limit);
     const skip = (page - 1) * limit;
+    console.time("getRooms query");
     const totalRooms = await Room.countDocuments({ isAvailable: true });
     const totalPages = Math.ceil(totalRooms / limit);
 
@@ -79,8 +80,8 @@ export const getRooms = async (req, res) => {
           path: "owner",
           select: "image",
         },
-      }).sort({ createdAt: -1 }).skip(skip).limit(limit);
-
+      }).sort({ createdAt: -1 }).skip(skip).limit(limit).lean();
+    console.timeEnd("getRooms query");
     res.json({success: true,rooms,
       pagination: {
         total: totalRooms,
@@ -112,7 +113,7 @@ export const getAllRooms = async (req, res) => {
           select: "image",
         },
       })
-      .sort({ createdAt: -1 }).skip(skip).limit(parseInt(limit));
+      .sort({ createdAt: -1 }).skip(skip).limit(parseInt(limit)).lean();
     if (guests) {
       const guestCount = parseInt(guests);
       rooms = rooms.filter((room) => room.maxGuests >= guestCount);
@@ -157,7 +158,7 @@ export const getAllRooms = async (req, res) => {
 export const getOwnerRooms = async (req, res) => {
   try {
     const hotelData=await Hotel.findOne({owner:req.id})
-    const rooms = await Room.find({ hotel: hotelData._id.toString() }).populate("hotel");
+    const rooms = await Room.find({ hotel: hotelData._id.toString() }).populate("hotel").lean();
 
     res.status(200).json({ success: true, rooms });
   } catch (error) {
