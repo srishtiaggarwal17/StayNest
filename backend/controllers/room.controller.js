@@ -50,53 +50,24 @@ export const createRoom = async (req, res) => {
 
 
 // Get all rooms
-// export const getRooms = async (req, res) => {
-//   try {
-//     const rooms = await Room.find({isAvailable:true}).populate({
-//         path:'hotel',
-//         populate:{
-//             path:'owner',
-//             select:'image'
-//         }
-//     }).sort({createdAt:-1})
-//     res.json({success:true,rooms})
-//   } catch (error) {
-//     res.status(500).json({ success: false, message: error.message });
-//   }
-// };
 export const getRooms = async (req, res) => {
   try {
-    let { page = 1, limit = 6 } = req.query;
-    page = parseInt(page);
-    limit = parseInt(limit);
-    const skip = (page - 1) * limit;
-    console.time("getRooms query");
-    const totalRooms = await Room.countDocuments({ isAvailable: true });
-    const totalPages = Math.ceil(totalRooms / limit);
-
-    const rooms = await Room.find({ isAvailable: true }).populate({
-        path: "hotel",
-        populate: {
-          path: "owner",
-          select: "image",
-        },
-      }).sort({ createdAt: -1 }).skip(skip).limit(limit).lean();
-    console.timeEnd("getRooms query");
-    res.json({success: true,rooms,
-      pagination: {
-        total: totalRooms,
-        pages: totalPages,
-        currentPage: page,
-        limit,
-      },
-    });
+    const rooms = await Room.find({isAvailable:true}).populate({
+        path:'hotel',
+        populate:{
+            path:'owner',
+            select:'image'
+        }
+    }).sort({createdAt:-1})
+    res.json({success:true,rooms})
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
 export const getAllRooms = async (req, res) => {
   try {
-    const { searchTerm, checkInDate, checkOutDate, roomNos, guests, page = 1,limit = 15 } = req.query;
+    const { searchTerm, checkInDate, checkOutDate, roomNos, guests } = req.query;
     let filter = {isAvailable: true};
     if (searchTerm) {
       filter = {
@@ -104,7 +75,6 @@ export const getAllRooms = async (req, res) => {
         // isAvailable: true,
       };
     }
-    const skip = (page - 1) * limit;
     let rooms = await Room.find(filter)
       .populate({
         path: "hotel",
@@ -113,7 +83,7 @@ export const getAllRooms = async (req, res) => {
           select: "image",
         },
       })
-      .sort({ createdAt: -1 }).skip(skip).limit(parseInt(limit)).lean();
+      .sort({ createdAt: -1 });
     if (guests) {
       const guestCount = parseInt(guests);
       rooms = rooms.filter((room) => room.maxGuests >= guestCount);
@@ -137,17 +107,7 @@ export const getAllRooms = async (req, res) => {
       const checkedRooms = await Promise.all(roomAvailabilityPromises);
       rooms = checkedRooms.filter((room) => room.isAvailable);
     }
-    // res.json({ success: true, rooms });
-    const totalRooms = await Room.countDocuments(filter);
-    res.json({
-      success: true,
-      rooms,
-      pagination: {
-        total: totalRooms,
-        page: parseInt(page),
-        pages: Math.ceil(totalRooms / limit),
-      },
-    });
+    res.json({ success: true, rooms });
   } catch (error) {
     console.error("Error in getAllRooms:", error);
     res.status(500).json({ success: false, message: error.message });
