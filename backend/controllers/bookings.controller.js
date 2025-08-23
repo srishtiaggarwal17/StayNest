@@ -20,7 +20,7 @@ export const checkAvailability = async ({ room, checkInDate, checkOutDate, rooms
           checkOutDate: { $gt: checkIn },
         },
       ],
-    }).lean();
+    });
 
     // Total booked rooms for selected dates
     const totalRoomsBooked = overlappingBookings.reduce(
@@ -97,7 +97,7 @@ export const checkMultipleAvailability = async (req, res) => {
       room: { $in: roomIds },
       checkInDate: { $lt: checkOut },
       checkOutDate: { $gt: checkIn },
-    }).lean();
+    });
 
     const availabilityMap = {};
 
@@ -182,7 +182,7 @@ export const getUserBookings = async (req, res) => {
   try {
     const user=req.id;
     const bookings = await Bookings.find({user})
-      .populate("room hotel").sort({createdAt:-1}).lean()
+      .populate("room hotel").sort({createdAt:-1})
     res.status(200).json({ success: true, bookings });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -196,7 +196,7 @@ export const getHotelBookings = async (req, res) => {
     if(!hotel)
         return res.json({success:false,message:"Hotel not found."})
     const bookings = await Bookings.find({hotel:hotel._id})
-      .populate("room hotel user").sort({createdAt:-1}).lean()
+      .populate("room hotel user").sort({createdAt:-1})
 
     const totalBookings=bookings.length;
     const totalRevenue=bookings.reduce((acc,booking)=>acc+booking.totalPrice,0)
