@@ -254,21 +254,24 @@
 // export default Hotels;
 
 
-import React, { useEffect, useState } from "react";
+ import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import HotelCard from "@/components/HotelCard";
 import HotelFilter from "@/components/HotelFilter";
 import axios from "axios";
-import { ROOM_API_END_POINT } from "@/utils/constant";
+import { ROOM_API_END_POINT, BOOKING_API_END_POINT } from "@/utils/constant";
 import { Input } from "@/components/ui/input";
-import { motion, AnimatePresence } from "framer-motion";
 
-// const useQuery = () => new URLSearchParams(useLocation().search);
+const useQuery = () => new URLSearchParams(useLocation().search);
 
 const Hotels = () => {
   const [isLoading, setIsLoading] = useState(false);
-  // const query = useQuery();
-  // const destinationQuery = query.get("destination") || "";
+  const query = useQuery();
+  const destinationQuery = query.get("destination") || "";
+  const checkIn = query.get("checkIn");
+  const checkOut = query.get("checkOut");
+  const guests = query.get("guests") ? parseInt(query.get("guests")) : null;
+  const roomNos = query.get("rooms") ? parseInt(query.get("rooms")) : null;
 
   const [rooms, setRooms] = useState([]);
   const [filteredRooms, setFilteredRooms] = useState([]);
@@ -276,38 +279,99 @@ const Hotels = () => {
   const [roomTypes, setRoomTypes] = useState([]);
   const [priceRanges, setPriceRanges] = useState([]);
   const [sortBy, setSortBy] = useState("");
-  // const [searchTerm, setSearchTerm] = useState(destinationQuery);
+  const [searchTerm, setSearchTerm] = useState(destinationQuery);
+
   useEffect(() => {
     const fetchRooms = async () => {
       setIsLoading(true); 
       try {
-        const res = await axios.get(`${ROOM_API_END_POINT}/getR`, {withCredentials:true});
+        const res = await axios.get(`${ROOM_API_END_POINT}/getRooms`, {
+          params: {
+            searchTerm,
+            checkInDate: checkIn,
+            checkOutDate: checkOut,
+            guests,
+            roomNos,
+          },
+        });
         let allRooms = res.data.rooms;
 
         // Step 1: Search filter
-        // if (searchTerm.trim() !== "") {
-        //   const lowerSearch = searchTerm.toLowerCase();
-        //   allRooms = allRooms.filter((room) => {
-        //     const hotelName = room.hotel?.name?.toLowerCase() || "";
-        //     const address = room.hotel?.address?.toLowerCase() || "";
-        //     const type = room.type?.toLowerCase() || "";
-        //     const city = room.hotel?.city?.toLowerCase() || "";
-        //     return (
-        //       hotelName.includes(lowerSearch) ||
-        //       address.includes(lowerSearch) ||
-        //       type.includes(lowerSearch) ||
-        //       city.includes(lowerSearch)
-        //     );
-        //   });
-        // }
-        setRooms(allRooms);
+        if (searchTerm.trim() !== "") {
+          const lowerSearch = searchTerm.toLowerCase();
+          allRooms = allRooms.filter((room) => {
+            const hotelName = room.hotel?.name?.toLowerCase() || "";
+            const address = room.hotel?.address?.toLowerCase() || "";
+            const type = room.type?.toLowerCase() || "";
+            const city = room.hotel?.city?.toLowerCase() || "";
+            return (
+              hotelName.includes(lowerSearch) ||
+              address.includes(lowerSearch) ||
+              type.includes(lowerSearch) ||
+              city.includes(lowerSearch)
+            );
+          });
+        }
+
+        // Step 2: Check availability if dates are provided
+        if (checkIn && checkOut) {
+          const availabilityChecks = allRooms.map(async (room) => {
+            try {
+              const { data } = await axios.post(
+                `${BOOKING_API_END_POINT}/check-availability`,
+                {
+                  room: room._id,
+                  checkInDate: checkIn,
+                  checkOutDate: checkOut,
+                  rooms: roomNos || 1,
+                }
+              );
+
+              return {
+                ...room,
+                availableRooms: data.availableRooms,
+                isAvailable: data.isAvailable,
+              };
+            } catch (err) {
+              console.error("Availability check failed:", err);
+              return { ...room, availableRooms: 0, isAvailable: false };
+            }
+          });
+
+          const resultRooms = await Promise.all(availabilityChecks);
+
+          // Optional filter by guests or room count
+          const filteredByGuests = resultRooms.filter((room) => {
+            if (guests && room.maxGuests < guests) return false;
+            return true;
+          });
+
+          setRooms(filteredByGuests);
+          setFilteredRooms(filteredByGuests);
+        } else {
+          // No dates: show rooms filtered only by guest count
+          const filtered = guests
+            ? allRooms.filter((room) => room.maxGuests >= guests)
+            : allRooms;
+
+          const enrichedRooms = filtered.map((room) => ({
+            ...room,
+            isAvailable: true,
+            availableRooms: room.roomCount,
+          }));
+
+          setRooms(enrichedRooms);
+          setFilteredRooms(enrichedRooms);
+        }
       } catch (err) {
         console.error(err);
       }
-      setIsLoading(false);
+      setIsLoading(false); 
     };
+
     fetchRooms();
-  },[]);
+
+  }, [searchTerm, checkIn, checkOut, guests, roomNos]);
 
   useEffect(() => {
     let filtered = [...rooms];
@@ -337,13 +401,13 @@ const Hotels = () => {
   }, [roomTypes, priceRanges, sortBy, rooms]);
 
   return (
-    <div className="max-w-7xl mx-auto p-4 mt-20">
+    <div className="max-w-7xl mx-auto p-4 mt-16">
       {/* Top section for small screens (Map + Filters stacked) */}
       <div className="flex flex-col gap-4 md:hidden mb-6">
         <div className="w-full h-40 rounded-lg overflow-hidden shadow-sm border">
           <iframe
             title="Map"
-            src={`https://www.google.com/maps?q=${encodeURIComponent( "India")}&output=embed`}
+            src={`https://www.google.com/maps?q=${encodeURIComponent(searchTerm || "India")}&output=embed`}
             width="100%"
             height="100%"
             allowFullScreen=""
@@ -365,8 +429,77 @@ const Hotels = () => {
         {/* Main Content */}
         <div className="md:w-3/4">
           <h1 className="text-3xl font-semibold mb-2">Available Rooms</h1>
-          <p className="text-gray-500 mb-8">Explore all rooms from different hotels across locations.</p>
+          <p className="text-gray-500 mb-2">Explore all rooms from different hotels across locations.</p>
+          <p className="text-gray-600 text-sm mb-4">
+            {checkIn && `Check-in: ${checkIn}`}{" "}
+            {checkOut && `| Check-out: ${checkOut}`}{" "}
+            {guests && `| Guests: ${guests}`}{" "}
+            {roomNos && `| Rooms: ${roomNos}`}
+          </p>
 
+          <Input
+            type="text"
+            placeholder="Search by hotel, address, or room type..."
+            className="mb-2"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <Input
+              type="date"
+              value={checkIn || ""}
+              onChange={(e) =>
+                (window.location.search = `?destination=${searchTerm}&checkIn=${
+                  e.target.value
+                }&checkOut=${checkOut || ""}&guests=${guests || ""}&rooms=${
+                  roomNos || ""
+                }`)
+              }
+              className="w-full"
+              placeholder="Check-in"
+            />
+            <Input
+              type="date"
+              value={checkOut || ""}
+              onChange={(e) =>
+                (window.location.search = `?destination=${searchTerm}&checkIn=${
+                  checkIn || ""
+                }&checkOut=${e.target.value}&guests=${guests || ""}&rooms=${
+                  roomNos || ""
+                }`)
+              }
+              className="w-full"
+              placeholder="Check-out"
+            />
+            <Input
+              type="number"
+              min="1"
+              value={guests || ""}
+              onChange={(e) =>
+                (window.location.search = `?destination=${searchTerm}&checkIn=${
+                  checkIn || ""
+                }&checkOut=${checkOut || ""}&guests=${
+                  e.target.value
+                }&rooms=${roomNos || ""}`)
+              }
+              className="w-full"
+              placeholder="Guests"
+            />
+            <Input
+              type="number"
+              min="1"
+              value={roomNos || ""}
+              onChange={(e) =>
+                (window.location.search = `?destination=${searchTerm}&checkIn=${
+                  checkIn || ""
+                }&checkOut=${checkOut || ""}&guests=${guests || ""}&rooms=${
+                  e.target.value
+                }`)
+              }
+              className="w-full"
+              placeholder="Rooms"
+            />
+          </div>          
           {isLoading ? (
           <div className="space-y-6">
           {[...Array(2)].map((_, idx) => (
@@ -398,23 +531,14 @@ const Hotels = () => {
           ) : filteredRooms.length === 0 ? (
             <span>No rooms found.</span>
           ) : (
-            <AnimatePresence>
-              {filteredRooms.map((room) => (
-                <motion.div
-                  key={room._id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.4 }}
-                >
-                  <HotelCard
-                    room={room}
-                    isAvailable={room.isAvailable}
-                    availableRooms={room.availableRooms}
-                  />
-                </motion.div>
-              ))}
-            </AnimatePresence>
+            filteredRooms.map((room) => (
+              <HotelCard
+                key={room._id}
+                room={room}
+                isAvailable={room.isAvailable}
+                availableRooms={room.availableRooms}
+              />
+            ))
           )}
         </div>
 
@@ -423,7 +547,7 @@ const Hotels = () => {
           <div className="w-full h-40 rounded-lg overflow-hidden shadow-sm border">
             <iframe
               title="Map"
-              src={`https://www.google.com/maps?q=${encodeURIComponent( "India")}&output=embed`}
+              src={`https://www.google.com/maps?q=${encodeURIComponent(searchTerm || "India")}&output=embed`}
               width="100%"
               height="100%"
               allowFullScreen=""
@@ -446,6 +570,5 @@ const Hotels = () => {
 };
 
 export default Hotels;
-  
-            
-              
+                  
+          
