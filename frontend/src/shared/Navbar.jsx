@@ -208,7 +208,6 @@ const Navbar = () => {
           {[
             { path: "/", label: "Home" },
             { path: "/hotels", label: "Hotels" },
-            { path: "/browse", label: "Browse" },
             { path: "/experience", label: "Experience" },
             { path: "/about", label: "About" },
           ].map((item) => (
@@ -340,7 +339,6 @@ const Navbar = () => {
             {[
               { path: "/", label: "Home", icon: <Home size={18} /> },
               { path: "/hotels", label: "Hotels", icon: <Building2 size={18} /> },
-              { path: "/browse", label: "Browse", icon: <Search size={18} /> },
               { path: "/experience", label: "Experience", icon: <Globe2 size={18} /> },
               { path: "/about", label: "About", icon: <Info size={18} /> },
             ].map((item) => (
