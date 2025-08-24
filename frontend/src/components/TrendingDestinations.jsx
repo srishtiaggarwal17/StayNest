@@ -27,7 +27,7 @@ export default function TrendingDestinations() {
   const navigate = useNavigate();
 
   const handleCityClick = (city) => {
-    navigate(`/browse?destination=${encodeURIComponent(city)}`);
+    navigate(`/hotels?destination=${encodeURIComponent(city)}`);
   };
 
   return (
@@ -95,6 +95,7 @@ export default function TrendingDestinations() {
     </section>
   );
 }
+
 
 
 
