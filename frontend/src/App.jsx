@@ -18,7 +18,6 @@ import Experience from "./pages/Experience";
 import Footer from "./shared/Footer";
 import Profile from "./pages/Profile";
 import PaymentSuccess from "./pages/PaymentSuccess";
-import Browse from "./pages/Browse";
 
 const App=()=>{
   const isOwnerPath=useLocation().pathname.includes("owner")
