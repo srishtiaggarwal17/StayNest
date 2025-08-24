@@ -23,7 +23,7 @@ const HeroSection = () => {
       rooms
     }).toString();
 
-    navigate(`/browse?${params}`);
+    navigate(`/hotels?${params}`);
   };
 
   return (
